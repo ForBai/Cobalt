@@ -1,15 +1,15 @@
 package org.cobalt.api.module
 
-internal object ModuleManager {
+object ModuleManager {
 
-  private val modules = mutableListOf<Module>()
+  private val moduleList = mutableListOf<Module>()
 
-  fun addModule(module: Module) {
-    modules.add(module)
+  fun addModules(vararg modules: Module) {
+    moduleList.addAll(listOf(*modules))
   }
 
   fun getModules(): List<Module> {
-    return modules
+    return moduleList
   }
 
 }
