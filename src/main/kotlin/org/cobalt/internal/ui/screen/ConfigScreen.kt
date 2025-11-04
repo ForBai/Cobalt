@@ -43,23 +43,19 @@ internal object ConfigScreen : Screen(Text.empty()) {
 
   fun updateRenderedModules() {
     modules.clear()
-    for (i in 1..100) {
-      modules.addAll(
-        ModuleManager.getModules()
-          .filter { it.category == selectedCategory }
-          .map { ModuleComponent(it) }
-      )
-    }
+    modules.addAll(
+      ModuleManager.getModules()
+        .filter { it.category == selectedCategory }
+        .map { ModuleComponent(it) }
+    )
   }
 
   init {
     EventBus.register(this)
 
-    for (i in 1..100) {
-      categories.addAll(ModuleManager.getCategories().map {
-        CategoryComponent(it)
-      })
-    }
+    categories.addAll(ModuleManager.getCategories().map {
+      CategoryComponent(it)
+    })
 
     updateRenderedModules()
   }
