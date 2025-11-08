@@ -22,6 +22,9 @@
         "adapter": "kotlin",
         "value": "org.cobalt.Cobalt"
       }
+    ],
+    "preLaunch": [
+      "org.cobalt.init.AddonPrelaunchEntryPoint"
     ]
   },
   "mixins": [
