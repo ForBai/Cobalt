@@ -4,6 +4,9 @@ import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.MinecraftClient
 import org.cobalt.api.command.CommandManager
 import org.cobalt.api.event.EventBus
+import org.cobalt.api.event.annotation.SubscribeEvent
+import org.cobalt.api.event.impl.client.BlockChangeEvent
+import org.cobalt.api.util.ChatUtils
 import org.cobalt.internal.feat.rpc.DiscordPresence
 import org.cobalt.api.util.TickScheduler
 import org.cobalt.internal.addon.AddonManager
@@ -29,7 +32,7 @@ object Cobalt : ClientModInitializer {
 
     listOf(
       TickScheduler,
-      DiscordPresence
+      DiscordPresence,
     ).forEach { EventBus.register(it) }
 
     DiscordPresence.connect()
