@@ -137,13 +137,13 @@ object RotationUtils {
      * @param yaw Target yaw angle.
      * @param pitch Target pitch angle.
      * @param speed Rotation speed (0.0-1.0, default 0.1).
-     * @param easing Easing function to use (default EASE_OUT_CUBIC).
+     * @param easing Easing function to use (default LINEAR).
      */
     fun rotateTo(
         yaw: Float,
         pitch: Float,
         speed: Float = 0.1f,
-        easing: EasingType = EasingType.EASE_OUT_CUBIC
+        easing: EasingType = EasingType.LINEAR
     ) {
         val mc = org.cobalt.Cobalt.mc
         val player = mc.player ?: return
@@ -253,16 +253,13 @@ object RotationUtils {
 
     @org.cobalt.api.event.annotation.SubscribeEvent
     fun onWorldRender(event: org.cobalt.api.event.impl.render.WorldRenderEvent.Start) {
-        //sendDebug("$rotating")
         if (!rotating) return
         
         val mc = org.cobalt.Cobalt.mc
         val player = mc.player ?: return
-        //sendDebug("is rotating")
         rotationProgress += rotationSpeed
         
         if (rotationProgress >= 1.0f) {
-          //  sendDebug("rotp >= 1f")
             player.yaw = normalizeAngle(applyGCD(targetYaw, player.yaw))
             player.pitch = applyGCD(targetPitch, player.pitch, -90f, 90f)
             rotating = false
