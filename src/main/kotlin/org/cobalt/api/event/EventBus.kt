@@ -11,6 +11,8 @@ object EventBus {
 
   private val listeners = ConcurrentHashMap<Class<*>, MutableList<ListenerData>>()
   private val registered = mutableSetOf<Any>()
+ // var registeredViaFun = mutableSetOf<String>()
+  private val dynamicRunnables = ConcurrentHashMap<Class<out Event>, MutableList<Runnable>>()
 
   fun register(obj: Any) {
     if (obj in registered) return
@@ -55,10 +57,18 @@ object EventBus {
       }
     }
 
+    handleDynamic(event)
     return event
   }
 
-  /** Thank you oblongboot for this superb function */
+  /**
+   * Registers all functions with the @SubscribeEvent annotation in the given package.
+   *
+   * @param packageStr The package to scan for @SubscribeEvent annotated functions.
+   * @param excludeFiles A set of classes to exclude from registration.
+   *
+   * @author oblongboot (i dont care about credit, nathan included the comment to i re-added it)
+   */
   fun discoverAndRegister(packageStr: String, excludeFiles: Set<Class<*>> = emptySet()) {
     val reflections = Reflections(
       ConfigurationBuilder()
@@ -92,5 +102,22 @@ object EventBus {
   }
 
   private data class ListenerData(val instance: Any, val method: Method, val priority: Int)
+
+  /**
+   * Registers a function to be called when an event is posted, alternative to using the @SubscribeEvent annotation.
+   *
+   * @param event The event to listen for.
+   * @param runnable The function to call when the event is posted.
+   */
+  fun registerEvent(eventClass: Class<out Event>, runnable: Runnable) {
+      dynamicRunnables.computeIfAbsent(eventClass) { mutableListOf() }.add(runnable)
+  }
+
+
+  fun handleDynamic(event: Event) {
+      dynamicRunnables
+          .filter { (clazz, _) -> clazz.isAssignableFrom(event::class.java) }
+          .forEach { (_, listeners) -> listeners.forEach { it.run() } }
+  }
 
 }

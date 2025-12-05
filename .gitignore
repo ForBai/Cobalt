@@ -4,3 +4,4 @@
 build/
 run/
 docs-versions/
+.vscode/

@@ -37,5 +37,4 @@ object Cobalt : ClientModInitializer {
     Config.loadModulesConfig()
     println("Cobalt Mod Initialized")
   }
-
 }
