@@ -5,7 +5,7 @@ import org.cobalt.api.command.annotation.DefaultHandler
 import org.cobalt.api.command.annotation.SubCommand
 import org.cobalt.api.util.ChatUtils
 import org.cobalt.internal.feat.general.NameProtect
-import org.cobalt.internal.ui.screen.ConfigScreen
+import org.cobalt.internal.ui.screen.UIScreen
 
 object MainCommand : Command(
   name = "cobalt",
@@ -14,7 +14,7 @@ object MainCommand : Command(
 
   @DefaultHandler
   fun main() {
-    ConfigScreen.openUI()
+    UIScreen.openUI()
   }
 
   @SubCommand

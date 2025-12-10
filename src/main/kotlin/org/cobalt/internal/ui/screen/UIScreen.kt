@@ -11,7 +11,7 @@ import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.helper.Config
 import org.cobalt.internal.ui.animation.EaseInOutAnimation
 
-internal object ConfigScreen : Screen(Text.empty()) {
+internal object UIScreen : Screen(Text.empty()) {
 
   /** Needed for opening animation */
   private val openAnim = EaseInOutAnimation(400)
