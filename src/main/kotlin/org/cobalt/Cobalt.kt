@@ -6,7 +6,9 @@ import org.cobalt.api.addon.Addon
 import org.cobalt.api.command.CommandManager
 import org.cobalt.api.event.EventBus
 import org.cobalt.api.util.TickScheduler
+import org.cobalt.api.util.rotation.Rotation
 import org.cobalt.internal.command.MainCommand
+import org.cobalt.internal.feat.rotation.DefaultRotations
 import org.cobalt.internal.feat.rpc.DiscordPresence
 import org.cobalt.internal.helper.Config
 import org.cobalt.internal.loader.AddonLoader
@@ -32,9 +34,24 @@ object Cobalt : ClientModInitializer {
     listOf(
       TickScheduler,
       DiscordPresence,
+      MainCommand
     ).forEach { EventBus.register(it) }
 
     Config.loadModulesConfig()
     println("Cobalt Mod Initialized")
   }
+
+  @JvmStatic
+  private var rotationExec: Rotation = DefaultRotations
+
+  @JvmStatic
+  fun getRotationExec(): Rotation {
+    return rotationExec
+  }
+
+  @JvmStatic
+  fun setRotationExec(rotationExec: Rotation) {
+    this.rotationExec = rotationExec
+  }
+
 }

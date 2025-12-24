@@ -1,9 +1,8 @@
-package org.cobalt.api.feat.rotation
+package org.cobalt.api.util.rotation
 
 import net.minecraft.client.network.ClientPlayerEntity
 
 interface Rotation {
-  val name: String
 
   fun rotateTo(
     yaw: Float,
@@ -11,4 +10,5 @@ interface Rotation {
     player: ClientPlayerEntity,
     parameters: RotationParameters,
   )
+
 }

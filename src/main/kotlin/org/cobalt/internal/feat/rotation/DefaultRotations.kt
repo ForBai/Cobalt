@@ -1,18 +1,17 @@
 package org.cobalt.internal.feat.rotation
 
 import net.minecraft.client.network.ClientPlayerEntity
-import org.cobalt.api.feat.rotation.Rotation
-import org.cobalt.api.feat.rotation.RotationParameters
+import org.cobalt.api.util.rotation.Rotation
 import org.cobalt.api.util.player.MovementManager
 import org.cobalt.internal.feat.rotation.strategy.OvershootRotationStrategy
 import org.cobalt.internal.feat.rotation.strategy.SimpleRotationStrategy
 import kotlin.concurrent.thread
 import kotlin.random.Random
 import org.cobalt.api.util.ChatUtils
+import org.cobalt.api.util.rotation.RotationParameters
+import org.cobalt.internal.feat.rotation.strategy.RotationStrategy
 
 internal object DefaultRotations : Rotation {
-  override val name: String
-    get() = "Default"
 
   @Volatile
   private var rotationThread: Thread? = null
@@ -32,13 +31,11 @@ internal object DefaultRotations : Rotation {
   }
 
   override fun rotateTo(
-      yaw: Float,
-      pitch: Float,
-      player: ClientPlayerEntity,
-      parameters: RotationParameters,
+    yaw: Float,
+    pitch: Float,
+    player: ClientPlayerEntity,
+    parameters: RotationParameters,
   ) {
-    stop()
-
     if (!DefaultRotationConfig().validate()) {
       ChatUtils.sendMessage("Invalid rotation config")
       return

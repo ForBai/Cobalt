@@ -1,3 +1,3 @@
-package org.cobalt.api.feat.rotation
+package org.cobalt.api.util.rotation
 
 abstract class RotationParameters()

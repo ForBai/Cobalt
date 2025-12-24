@@ -1,6 +1,6 @@
 package org.cobalt.internal.feat.rotation
 
-import org.cobalt.api.feat.rotation.RotationParameters
+import org.cobalt.api.util.rotation.RotationParameters
 
 internal class DefaultRotationParameters : RotationParameters() {
   var yawMaxOffset: Float = 0f

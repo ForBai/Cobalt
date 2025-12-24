@@ -6,7 +6,7 @@ import org.cobalt.api.util.ChatUtils
 import org.cobalt.internal.feat.rotation.DefaultRotationParameters
 import org.cobalt.internal.feat.rotation.RotationExecutor
 import org.cobalt.internal.feat.rotation.RotationMath
-import org.cobalt.internal.feat.rotation.RotationStrategy
+import org.cobalt.internal.feat.rotation.strategy.RotationStrategy
 
 internal class OvershootRotationStrategy : RotationStrategy {
   override fun perform(
