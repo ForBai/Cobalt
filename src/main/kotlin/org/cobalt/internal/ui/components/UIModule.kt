@@ -3,6 +3,7 @@ package org.cobalt.internal.ui.components
 import java.awt.Color
 import kotlinx.coroutines.selects.select
 import org.cobalt.api.module.Module
+import org.cobalt.api.module.setting.Setting
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.panel.panels.UIModuleList
@@ -60,6 +61,10 @@ internal class UIModule(
       colorAnimation.start()
       xOffsetAnimation.start()
     }
+  }
+
+  fun getSettings(): List<Setting<*>> {
+    return module.getSettings()
   }
 
   companion object {

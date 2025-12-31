@@ -2,12 +2,26 @@ package org.cobalt.internal.ui.panel.panels
 
 import java.awt.Color
 import org.cobalt.api.addon.Addon
+import org.cobalt.api.module.setting.impl.CheckboxSetting
+import org.cobalt.api.module.setting.impl.ColorSetting
+import org.cobalt.api.module.setting.impl.KeyBindSetting
+import org.cobalt.api.module.setting.impl.ModeSetting
+import org.cobalt.api.module.setting.impl.RangeSetting
+import org.cobalt.api.module.setting.impl.SliderSetting
+import org.cobalt.api.module.setting.impl.TextSetting
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.loader.AddonLoader
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.components.UIBackButton
 import org.cobalt.internal.ui.components.UIModule
 import org.cobalt.internal.ui.components.UITopbar
+import org.cobalt.internal.ui.components.settings.UICheckboxSetting
+import org.cobalt.internal.ui.components.settings.UIColorSetting
+import org.cobalt.internal.ui.components.settings.UIKeyBindSetting
+import org.cobalt.internal.ui.components.settings.UIModeSetting
+import org.cobalt.internal.ui.components.settings.UIRangeSetting
+import org.cobalt.internal.ui.components.settings.UISliderSetting
+import org.cobalt.internal.ui.components.settings.UITextSetting
 import org.cobalt.internal.ui.panel.UIPanel
 import org.cobalt.internal.ui.util.GridLayout
 import org.cobalt.internal.ui.util.ScrollHandler
@@ -26,16 +40,16 @@ internal class UIModuleList(
   private val topBar = UITopbar("Modules")
   private val backButton = UIBackButton()
 
+  /**
+   * This is for the modules list
+   */
   private val modules = addon.getModules()
     .withIndex()
-    .flatMap { (index, module) ->
-      if (index == 0) {
-        List(1) { UIModule(module, this, true) }
-      } else {
-        List(10) { UIModule(module, this, false) }
-      }
+    .map { (index, module) ->
+      UIModule(module, this, index == 0)
     }
 
+  private val modulesScroll = ScrollHandler()
   private val modulesLayout = GridLayout(
     columns = 1,
     itemWidth = 182.5F,
@@ -43,8 +57,32 @@ internal class UIModuleList(
     gap = 5F
   )
 
-  private val modulesScroll = ScrollHandler()
   private var module = modules.first()
+
+
+  /**
+   * This is for the settings list
+   */
+  private var settings = module.getSettings()
+    .map {
+      when (it) {
+        is CheckboxSetting -> UICheckboxSetting(it)
+        is ColorSetting -> UIColorSetting(it)
+        is KeyBindSetting -> UIKeyBindSetting(it)
+        is ModeSetting -> UIModeSetting(it)
+        is RangeSetting -> UIRangeSetting(it)
+        is SliderSetting -> UISliderSetting(it)
+        is TextSetting -> UITextSetting(it)
+      }
+    }
+
+  private val settingsScroll = ScrollHandler()
+  private val settingsLayout = GridLayout(
+    columns = 1,
+    itemWidth = 627.5F,
+    itemHeight = 60F,
+    gap = 5F
+  )
 
   init {
     components.addAll(modules)
@@ -108,6 +146,18 @@ internal class UIModuleList(
     }
 
     this.module = module
+    this.settings = module.getSettings()
+      .map {
+        when (it) {
+          is CheckboxSetting -> UICheckboxSetting(it)
+          is ColorSetting -> UIColorSetting(it)
+          is KeyBindSetting -> UIKeyBindSetting(it)
+          is ModeSetting -> UIModeSetting(it)
+          is RangeSetting -> UIRangeSetting(it)
+          is SliderSetting -> UISliderSetting(it)
+          is TextSetting -> UITextSetting(it)
+        }
+      }
   }
 
 }
