@@ -41,7 +41,7 @@ internal class UIModuleList(
   private val backButton = UIBackButton()
 
   /**
-   * This is for the modules list
+   * Modules list (left side)
    */
   private val modules = addon.getModules()
     .withIndex()
@@ -61,7 +61,7 @@ internal class UIModuleList(
 
 
   /**
-   * This is for the settings list
+   * Settings list (right side)
    */
   private var settings = module.getSettings()
     .map {
@@ -72,7 +72,7 @@ internal class UIModuleList(
         is ModeSetting -> UIModeSetting(it)
         is RangeSetting -> UIRangeSetting(it)
         is SliderSetting -> UISliderSetting(it)
-        is TextSetting -> UITextSetting(it)
+        else -> UITextSetting(it as TextSetting)
       }
     }
 
@@ -81,7 +81,7 @@ internal class UIModuleList(
     columns = 1,
     itemWidth = 627.5F,
     itemHeight = 60F,
-    gap = 5F
+    gap = 10F
   )
 
   init {
@@ -115,15 +115,28 @@ internal class UIModuleList(
       15F, Color(230, 230, 230).rgb
     )
 
+    // Render modules list (left side)
     val startY = y + topBar.height + backButton.height + 40F
     val visibleHeight = height - (topBar.height + backButton.height + 40F)
 
     modulesScroll.setMaxScroll(modulesLayout.contentHeight(modules.size) + 20F, visibleHeight)
     NVGRenderer.pushScissor(x, startY, width / 4F, visibleHeight)
 
-    val scrollOffset = modulesScroll.getOffset()
-    modulesLayout.layout(x + 20F, startY - scrollOffset, modules)
+    val modulesScrollOffset = modulesScroll.getOffset()
+    modulesLayout.layout(x + 20F, startY - modulesScrollOffset, modules)
     modules.forEach(UIComponent::render)
+
+    NVGRenderer.popScissor()
+
+    // Render settings list (right side)
+    val settingsStartX = x + width / 4F + 20F
+
+    settingsScroll.setMaxScroll(settingsLayout.contentHeight(settings.size) - 15F, visibleHeight + 35F)
+    NVGRenderer.pushScissor(settingsStartX, startY - 35F, width * 3F / 4F - 40F, visibleHeight + 35F)
+
+    val settingsScrollOffset = settingsScroll.getOffset()
+    settingsLayout.layout(settingsStartX, startY - 35F - settingsScrollOffset, settings)
+    settings.forEach(UIComponent::render)
 
     NVGRenderer.popScissor()
   }
@@ -131,6 +144,11 @@ internal class UIModuleList(
   override fun mouseScrolled(horizontalAmount: Double, verticalAmount: Double): Boolean {
     if (isHoveringOver(x, y, width / 4F, height)) {
       modulesScroll.handleScroll(verticalAmount)
+      return true
+    }
+
+    if (isHoveringOver(x + width / 4F, y, width * 3F / 4F, height)) {
+      settingsScroll.handleScroll(verticalAmount)
       return true
     }
 
@@ -155,7 +173,7 @@ internal class UIModuleList(
           is ModeSetting -> UIModeSetting(it)
           is RangeSetting -> UIRangeSetting(it)
           is SliderSetting -> UISliderSetting(it)
-          is TextSetting -> UITextSetting(it)
+          else -> UITextSetting(it as TextSetting)
         }
       }
   }
