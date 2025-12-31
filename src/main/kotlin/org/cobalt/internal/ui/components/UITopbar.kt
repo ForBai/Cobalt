@@ -4,7 +4,7 @@ import java.awt.Color
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 
-class UITopbar(
+internal class UITopbar(
   private var title: String,
 ) : UIComponent(
   x = 0F,

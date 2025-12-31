@@ -2,7 +2,7 @@ package org.cobalt.internal.ui
 
 import net.minecraft.client.input.KeyInput
 
-abstract class UIComponent(
+internal abstract class UIComponent(
   var x: Float,
   var y: Float,
   val width: Float,

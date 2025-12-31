@@ -12,7 +12,7 @@ import org.cobalt.internal.ui.util.UIGridLayout
 import org.cobalt.internal.ui.util.UIScrollHandler
 import org.cobalt.internal.ui.util.isHoveringOver
 
-class UIAddonList : UIPanel(
+internal class UIAddonList : UIPanel(
   x = 0F,
   y = 0F,
   width = 890F,

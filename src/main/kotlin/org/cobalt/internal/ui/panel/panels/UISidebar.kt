@@ -8,7 +8,7 @@ import org.cobalt.internal.ui.panel.UIPanel
 import org.cobalt.internal.ui.screen.UIConfig
 import org.cobalt.internal.ui.util.isHoveringOver
 
-class UISidebar : UIPanel(
+internal class UISidebar : UIPanel(
   x = 0F,
   y = 0F,
   width = 70F,

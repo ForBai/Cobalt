@@ -12,7 +12,7 @@ import org.cobalt.internal.ui.panel.UIPanel
 import org.cobalt.internal.ui.screen.UIConfig
 import org.cobalt.internal.ui.util.isHoveringOver
 
-class UIModuleList(
+internal class UIModuleList(
   private val metadata: AddonLoader.AddonMetadata,
   private val addon: Addon,
 ) : UIPanel(

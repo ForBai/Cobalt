@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.VertexFormat.DrawMode
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.render.VertexFormats
 
-object RenderPipelines {
+internal object RenderPipelines {
 
   val LINE_LIST: RenderPipeline = RenderPipelines.register(
     RenderPipeline.builder(*arrayOf<RenderPipeline.Snippet?>(RenderPipelines.RENDERTYPE_LINES_SNIPPET))

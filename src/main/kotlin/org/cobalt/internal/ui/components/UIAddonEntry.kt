@@ -6,7 +6,7 @@ import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.loader.AddonLoader
 import org.cobalt.internal.ui.UIComponent
 
-class UIAddonEntry(
+internal class UIAddonEntry(
   val metadata: AddonLoader.AddonMetadata,
   val addon: Addon,
 ) : UIComponent(

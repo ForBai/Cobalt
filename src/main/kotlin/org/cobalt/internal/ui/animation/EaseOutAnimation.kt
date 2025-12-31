@@ -1,6 +1,6 @@
 package org.cobalt.internal.ui.animation
 
-class EaseOutAnimation(duration: Long) : Animation<Float>(duration) {
+internal class EaseOutAnimation(duration: Long) : Animation<Float>(duration) {
 
   override fun get(start: Float, end: Float, reverse: Boolean): Float {
     val startVal = if (reverse) end else start

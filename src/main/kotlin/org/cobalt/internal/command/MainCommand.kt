@@ -8,7 +8,7 @@ import org.cobalt.internal.rotation.RotationExec
 import org.cobalt.internal.rotation.strategy.TimedEaseStrategy
 import org.cobalt.internal.ui.screen.UIConfig
 
-object MainCommand : Command(
+internal object MainCommand : Command(
   name = "cobalt",
   aliases = arrayOf("cb")
 ) {

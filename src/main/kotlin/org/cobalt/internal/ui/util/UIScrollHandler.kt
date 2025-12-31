@@ -2,7 +2,7 @@ package org.cobalt.internal.ui.util
 
 import kotlin.math.max
 
-class UIScrollHandler(
+internal class UIScrollHandler(
   private val scrollSpeed: Float = 20f
 ) {
 

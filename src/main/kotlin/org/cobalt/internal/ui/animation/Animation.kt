@@ -1,6 +1,6 @@
 package org.cobalt.internal.ui.animation
 
-abstract class Animation<T>(private val duration: Long) {
+internal abstract class Animation<T>(private val duration: Long) {
 
   private var startTime: Long = 0L
   private var animating = false

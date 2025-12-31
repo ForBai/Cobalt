@@ -3,7 +3,7 @@ package org.cobalt.internal.ui.panel
 import net.minecraft.client.input.KeyInput
 import org.cobalt.internal.ui.UIComponent
 
-abstract class UIPanel(
+internal abstract class UIPanel(
   x: Float,
   y: Float,
   width: Float,

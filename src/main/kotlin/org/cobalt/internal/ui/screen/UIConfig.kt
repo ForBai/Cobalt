@@ -14,7 +14,7 @@ import org.cobalt.internal.ui.panel.UIPanel
 import org.cobalt.internal.ui.panel.panels.UIAddonList
 import org.cobalt.internal.ui.panel.panels.UISidebar
 
-object UIConfig : UIScreen() {
+internal object UIConfig : UIScreen() {
 
   /** Needed for opening animation */
   private val openAnim = EaseInOutAnimation(400)

@@ -2,7 +2,7 @@ package org.cobalt.internal.ui.animation
 
 import java.awt.Color
 
-class ColorAnimation(duration: Long) {
+internal class ColorAnimation(duration: Long) {
 
   private val anim = EaseOutAnimation(duration)
 
