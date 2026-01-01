@@ -1,6 +1,11 @@
 <br />
 <div align="center">
-  <img width="100px" height="100px" src="/images/logo.png" />
+  <img 
+    width="100px"
+    height="100px"
+    src="/images/logo.png"
+    style="border-radius: 10%;"
+  />
   <br />
   <h3 align="center">Cobalt</h3>
 
