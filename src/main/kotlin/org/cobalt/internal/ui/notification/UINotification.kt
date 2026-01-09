@@ -19,18 +19,14 @@ internal class UINotification(
   private var createdAt = System.currentTimeMillis()
   private val slideAnim = EaseOutAnimation(150L)
   private var isClosing = false
-  private val notificationWidth = 350F
-  private val padding = 15F
-  private val descriptionMaxWidth = notificationWidth - (padding * 2)
+  private val descriptionMaxWidth = width - 30F
 
   private val wrappedDescription: List<String> by lazy {
     wrapText(description, descriptionMaxWidth, 12F)
   }
 
-  fun getNotificationHeight(): Float {
-    val descriptionHeight = wrappedDescription.size * 16F
-    return padding + 22F + descriptionHeight + padding
-  }
+  fun getNotificationHeight(): Float =
+    wrappedDescription.size * 16F + 52F
 
   init {
     slideAnim.start()
@@ -65,9 +61,9 @@ internal class UINotification(
 
   fun getOffsetX(): Float {
     return if (isClosing) {
-      slideAnim.get(0F, notificationWidth)
+      slideAnim.get(0F, width)
     } else {
-      notificationWidth - slideAnim.get(0F, notificationWidth)
+      width - slideAnim.get(0F, width)
     }
   }
 
@@ -91,7 +87,7 @@ internal class UINotification(
     NVGRenderer.rect(
       finalX,
       y,
-      notificationWidth,
+      width,
       finalHeight,
       Color(25, 25, 25).rgb,
       8F
@@ -100,7 +96,7 @@ internal class UINotification(
     NVGRenderer.hollowRect(
       finalX,
       y,
-      notificationWidth,
+      width,
       finalHeight,
       1.5F,
       Color(61, 94, 149).rgb,
@@ -109,21 +105,23 @@ internal class UINotification(
 
     NVGRenderer.text(
       title,
-      finalX + padding,
-      y + padding + 8F,
+      finalX + 15F,
+      y + 23F,
       14F,
       Color(230, 230, 230).rgb
     )
 
-    var yOffset = padding + 22F
+    var yOffset = 37F
+
     for (line in wrappedDescription) {
       NVGRenderer.text(
         line,
-        finalX + padding,
+        finalX + 15F,
         y + yOffset,
         12F,
         Color(179, 179, 179).rgb
       )
+
       yOffset += 16F
     }
   }
