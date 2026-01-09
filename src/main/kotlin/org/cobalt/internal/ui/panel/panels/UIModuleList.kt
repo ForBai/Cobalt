@@ -133,9 +133,7 @@ internal class UIModuleList(
     settings.forEach { setting ->
       when (setting) {
         is UIModeSetting -> setting.renderDropdown()
-        is UIColorSetting -> {
-          // WILL DO LATER
-        }
+        is UIColorSetting -> setting.drawColorPicker()
       }
     }
   }

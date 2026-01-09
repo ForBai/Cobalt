@@ -32,8 +32,12 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
       Color(179, 179, 179).rgb
     )
 
-    NVGRenderer.rect(x + width - 40F, y + (height / 2F) - 15F, 30F, 30F, setting.value, 6F)
-    NVGRenderer.hollowRect(x + width - 40F, y + (height / 2F) - 15F, 30F, 30F, 1.5F, Color(42, 42, 42).rgb, 6F)
+    NVGRenderer.rect(x + width - 50F, y + (height / 2F) - 15F, 30F, 30F, setting.value, 6F)
+    NVGRenderer.hollowRect(x + width - 50F, y + (height / 2F) - 15F, 30F, 30F, 1.5F, Color(42, 42, 42).rgb, 6F)
+  }
+
+  fun drawColorPicker() {
+
   }
 
 }

@@ -3,7 +3,7 @@ package org.cobalt.internal.ui.notification
 import java.awt.Color
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
-import org.cobalt.internal.ui.animation.SlideAnimation
+import org.cobalt.internal.ui.animation.EaseOutAnimation
 
 internal class UINotification(
   private val title: String,
@@ -17,8 +17,7 @@ internal class UINotification(
 ) {
 
   private var createdAt = System.currentTimeMillis()
-  private val slideInAnim = SlideAnimation(150L)
-  private val slideOutAnim = SlideAnimation(150L)
+  private val slideAnim = EaseOutAnimation(150L)
   private var isClosing = false
   private val notificationWidth = 350F
   private val padding = 15F
@@ -34,7 +33,7 @@ internal class UINotification(
   }
 
   init {
-    slideInAnim.start()
+    slideAnim.start()
   }
 
   @Suppress("SameParameterValue")
@@ -66,21 +65,21 @@ internal class UINotification(
 
   fun getOffsetX(): Float {
     return if (isClosing) {
-      slideOutAnim.get(0F, notificationWidth)
+      slideAnim.get(0F, notificationWidth)
     } else {
-      notificationWidth - slideInAnim.get(0F, notificationWidth)
+      notificationWidth - slideAnim.get(0F, notificationWidth)
     }
   }
 
   fun shouldRemove(): Boolean {
     val elapsed = System.currentTimeMillis() - createdAt
-    return elapsed > duration + 150L && isClosing && !slideOutAnim.isAnimating()
+    return elapsed > duration + 150L && isClosing && !slideAnim.isAnimating()
   }
 
   fun startClosing() {
     if (!isClosing) {
       isClosing = true
-      slideOutAnim.start()
+      slideAnim.start()
     }
   }
 
@@ -130,6 +129,6 @@ internal class UINotification(
   }
 
   fun getCreatedAt(): Long = createdAt
-
   fun getDuration(): Long = duration
+
 }
