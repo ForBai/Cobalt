@@ -4,11 +4,12 @@ import com.google.gson.*
 import java.io.File
 import org.cobalt.Cobalt
 import org.cobalt.api.module.ModuleManager
+import org.cobalt.internal.loader.AddonLoader
 
 internal object Config {
 
   private val gson = GsonBuilder().setPrettyPrinting().create()
-  private val modulesFile = File(Cobalt.mc.runDirectory, "config/cobalt/modules.json")
+  private val modulesFile = File(Cobalt.mc.runDirectory, "config/cobalt/addons.json")
 
   fun loadModulesConfig() {
     if (!modulesFile.exists()) {
@@ -22,21 +23,24 @@ internal object Config {
     val jsonArray = JsonParser.parseString(text).asJsonArray
 
     for (element in jsonArray) {
-      val moduleObj = element.asJsonObject
-      val moduleName = moduleObj.get("name").asString
+      val addonObj = element.asJsonObject
+      val addonId = addonObj.get("addon").asString
+      val modulesArray = addonObj.getAsJsonArray("modules")
 
-      val module = ModuleManager.getModules().find {
-        it.name == moduleName
-      } ?: continue
+      val addon = AddonLoader.getAddons().find { it.first.id == addonId }?.second ?: continue
 
-      val settingsObj = moduleObj.getAsJsonObject("settings")
-      if (settingsObj != null) {
-        for ((key, value) in settingsObj.entrySet()) {
-          val setting = module.getSettings().find {
-            it.name == key
-          } ?: continue
+      for (moduleElement in modulesArray) {
+        val moduleObj = moduleElement.asJsonObject
+        val moduleName = moduleObj.get("name").asString
 
-          setting.read(value)
+        val module = addon.getModules().find { it.name == moduleName } ?: continue
+
+        val settingsObj = moduleObj.getAsJsonObject("settings")
+        if (settingsObj != null) {
+          for ((key, value) in settingsObj.entrySet()) {
+            val setting = module.getSettings().find { it.name == key } ?: continue
+            setting.read(value)
+          }
         }
       }
     }
@@ -45,17 +49,24 @@ internal object Config {
   fun saveModulesConfig() {
     val jsonArray = JsonArray()
 
-    for (module in ModuleManager.getModules()) {
-      val moduleObj = JsonObject()
+    for ((metadata, addon) in AddonLoader.getAddons()) {
+      val addonObj = JsonObject()
+      addonObj.add("addon", JsonPrimitive(metadata.id))
 
-      moduleObj.add("name", JsonPrimitive(module.name))
-      moduleObj.add("settings", JsonObject().apply {
-        module.getSettings().forEach {
-          add(it.name, it.write())
-        }
-      })
+      val modulesArray = JsonArray()
+      for (module in addon.getModules()) {
+        val moduleObj = JsonObject()
+        moduleObj.add("name", JsonPrimitive(module.name))
+        moduleObj.add("settings", JsonObject().apply {
+          module.getSettings().forEach {
+            add(it.name, it.write())
+          }
+        })
+        modulesArray.add(moduleObj)
+      }
 
-      jsonArray.add(moduleObj)
+      addonObj.add("modules", modulesArray)
+      jsonArray.add(addonObj)
     }
 
     modulesFile.bufferedWriter().use {

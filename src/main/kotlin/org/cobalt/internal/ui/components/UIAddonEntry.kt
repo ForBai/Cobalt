@@ -20,9 +20,7 @@ internal class UIAddonEntry(
   height = 70F,
 ) {
 
-  val addonIcon = metadata.icon?.let {
-    AddonLoader.getAddonIcon(it)
-  } ?: boxIcon
+  val addonIcon = AddonLoader.getAddonIcon(metadata.id) ?: boxIcon
 
   override fun render() {
     NVGRenderer.rect(
