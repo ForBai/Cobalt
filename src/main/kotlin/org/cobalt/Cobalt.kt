@@ -39,37 +39,11 @@ object Cobalt : ClientModInitializer {
     println("Cobalt Mod Initialized")
   }
 
-  @JvmStatic
-  private var rotationExec: IRotationExec = RotationExec
-
-  @JvmStatic
-  private var pathExec: IPathExec? = null
-
-  @JvmStatic
-  fun getRotationExec() = rotationExec
-
-  @JvmStatic
-  fun getPathExec() = pathExec
-
-  @JvmStatic
-  fun setPathExec(pathExec: IPathExec) {
-    this.pathExec = pathExec
-  }
-
-  @JvmStatic
-  fun setRotationExec(rotationExec: IRotationExec) {
-    this.rotationExec = rotationExec
-  }
-
-  @SubscribeEvent
-  fun onTick(event: TickEvent.End) {
-    mc.player?.let { pathExec?.onTick(it) }
-  }
-
   @SubscribeEvent
   fun onWorldRenderLast(event: WorldRenderEvent.Last) {
-    mc.player?.let { rotationExec.onRotate(it) }
-    mc.player?.let { pathExec?.onWorldRenderLast(event.context, it) }
+    mc.player?.let {
+      RotationExec.onRotate(it)
+    }
   }
 
 }

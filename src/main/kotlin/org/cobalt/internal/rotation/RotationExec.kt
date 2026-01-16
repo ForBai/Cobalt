@@ -35,6 +35,10 @@ object RotationExec : IRotationExec {
     MovementManager.setLookLock(false)
   }
 
+  fun isRotation(): Boolean {
+    return isRotating
+  }
+
   override fun onRotate(
     player: ClientPlayerEntity,
   ) {
