@@ -3,22 +3,25 @@ package org.cobalt.api.rotation.strategy
 import net.minecraft.client.network.ClientPlayerEntity
 import org.cobalt.api.rotation.EasingType
 import org.cobalt.api.rotation.IRotationStrategy
+import org.cobalt.api.util.AngleUtils
+import org.cobalt.api.util.PlayerUtils
 import org.cobalt.api.util.helper.Rotation
 
 class TimedEaseStrategy(
-  private val yawEaseType: EasingType = EasingType.LINEAR,
-  private val pitchEaseType: EasingType = EasingType.LINEAR,
-  private val duration: Long = 500L,
+  private val yawEasing: EasingType,
+  private val pitchEasing: EasingType,
+  private val duration: Long
 ) : IRotationStrategy {
 
-  private var startTime: Long = 0L
-  private var startYaw: Float? = null
-  private var startPitch: Float? = null
+  private var startYaw: Float = 0.0F
+  private var startPitch: Float = 0.0F
+  private var endTime: Long = 0L
 
   override fun onStart() {
-    startTime = System.currentTimeMillis()
-    startYaw = null
-    startPitch = null
+    val (yaw, pitch) = PlayerUtils.rotation ?: throw IllegalStateException("Player rotation is null")
+    startYaw = yaw
+    startPitch = pitch
+    endTime = System.currentTimeMillis() + duration
   }
 
   override fun onRotate(
@@ -26,22 +29,27 @@ class TimedEaseStrategy(
     targetYaw: Float,
     targetPitch: Float,
   ): Rotation? {
-    if (startYaw == null || startPitch == null) {
-      startYaw = player.yaw
-      startPitch = player.pitch
-    }
+    val now = System.currentTimeMillis()
 
-    val elapsed = System.currentTimeMillis() - startTime
-    val progress = (elapsed.toFloat() / duration).coerceIn(0f, 1f)
-
-    if (progress >= 1f) {
+    if (now >= endTime) {
       return null
     }
 
-    val newYaw = yawEaseType.apply(startYaw!!, targetYaw, progress)
-    val newPitch = pitchEaseType.apply(startPitch!!, targetPitch, progress)
+    val progress = 1f - ((endTime - now).toFloat() / duration.toFloat())
+    val t = progress.coerceIn(0f, 1f)
 
-    return Rotation(newYaw, newPitch)
+    val yawDelta = AngleUtils.normalizeYaw(targetYaw - startYaw)
+    val yaw = yawEasing.apply(startYaw, startYaw + yawDelta, t)
+
+    val pitch = clampPitch(
+      pitchEasing.apply(startPitch, clampPitch(targetPitch), t)
+    )
+
+    return Rotation(yaw, pitch)
+  }
+
+  private fun clampPitch(pitch: Float): Float {
+    return pitch.coerceIn(-90f, 90f)
   }
 
 }
