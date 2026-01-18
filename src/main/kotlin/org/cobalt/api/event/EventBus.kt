@@ -99,7 +99,7 @@ object EventBus {
    * @param packageStr The package to scan for @SubscribeEvent annotated functions.
    * @param excludeFiles A set of classes to exclude from registration.
    *
-   * @author oblongboot
+   * @author oblongboot, awrped
    */
   @JvmStatic
   fun discoverAndRegister(packageStr: String, excludeFiles: Set<Class<*>> = emptySet()) {
