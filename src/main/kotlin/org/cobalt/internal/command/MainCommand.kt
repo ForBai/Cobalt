@@ -25,8 +25,8 @@ internal object MainCommand : Command(
     RotationExecutor.rotateTo(
       Rotation(yaw.toFloat(), pitch.toFloat()),
       TimedEaseStrategy(
-        yawEaseType = EasingType.EASE_OUT_EXPO,
-        pitchEaseType = EasingType.EASE_OUT_EXPO,
+        yawEasing = EasingType.EASE_OUT_EXPO,
+        pitchEasing = EasingType.EASE_OUT_EXPO,
         duration = duration.toLong()
       )
     )
