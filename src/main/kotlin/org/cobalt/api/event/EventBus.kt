@@ -1,7 +1,12 @@
 package org.cobalt.api.event
 
+import java.lang.invoke.LambdaMetafactory
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Consumer
 import org.cobalt.api.event.annotation.SubscribeEvent
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
@@ -9,13 +14,14 @@ import org.reflections.util.ConfigurationBuilder
 
 object EventBus {
 
-  private val listeners = ConcurrentHashMap<Class<*>, MutableList<ListenerData>>()
-  private val registered = mutableSetOf<Any>()
+  private val listeners = ConcurrentHashMap<Class<*>, CopyOnWriteArrayList<ListenerData>>()
+
+  private val registered = ConcurrentHashMap.newKeySet<Any>()
   private val dynamicRunnable = ConcurrentHashMap<Class<out Event>, MutableList<Runnable>>()
 
   @JvmStatic
   fun register(obj: Any) {
-    if (obj in registered) return
+    if (!registered.add(obj)) return
 
     obj::class.java.declaredMethods.forEach { method ->
       if (method.isAnnotationPresent(SubscribeEvent::class.java)) {
@@ -26,35 +32,34 @@ object EventBus {
 
         method.isAccessible = true
         val priority = method.getAnnotation(SubscribeEvent::class.java).priority
+        val eventType = params[0]
 
-        listeners.computeIfAbsent(params[0]) { mutableListOf() }
-          .add(ListenerData(obj, method, priority))
+        val consumer = createInvoker(obj, method)
 
-        listeners[params[0]]?.sortByDescending { it.priority }
+        listeners
+          .computeIfAbsent(eventType) { CopyOnWriteArrayList() }
+          .add(ListenerData(obj, consumer, priority, method))
+
+        listeners[eventType]?.sort()
       }
     }
-
-    registered.add(obj)
   }
 
   @Suppress("UNUSED")
   @JvmStatic
   fun unregister(obj: Any) {
-    if (obj !in registered) return
-    listeners.values.forEach { it.removeIf { data -> data.instance === obj } }
-    registered.remove(obj)
+    if (!registered.remove(obj)) return
+
+    listeners.values.forEach { list -> list.removeIf { it.instance === obj } }
   }
 
   @JvmStatic
   fun post(event: Event): Event {
     val eventClass = event::class.java
-    val applicable = listeners.flatMap { (type, methods) ->
-      if (type.isAssignableFrom(eventClass)) methods else emptyList()
-    }.sortedByDescending { it.priority }
 
-    applicable.forEach { data ->
+    listeners[eventClass]?.forEach { data ->
       try {
-        data.method.invoke(data.instance, event)
+        data.invoker.accept(event)
       } catch (e: Exception) {
         e.printStackTrace()
       }
@@ -62,6 +67,30 @@ object EventBus {
 
     handleDynamic(event)
     return event
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  private fun createInvoker(instance: Any, method: Method): Consumer<Event> {
+    return try {
+      method.isAccessible = true
+      val lookup = MethodHandles.lookup()
+      val methodHandle = lookup.unreflect(method)
+      val boundHandle = methodHandle.bindTo(instance)
+
+      val callSite =
+        LambdaMetafactory.metafactory(
+          lookup,
+          "accept",
+          MethodType.methodType(Consumer::class.java),
+          MethodType.methodType(Void.TYPE, Any::class.java),
+          boundHandle,
+          MethodType.methodType(Void.TYPE, method.parameterTypes[0])
+        )
+
+      callSite.target.invokeExact() as Consumer<Event>
+    } catch (e: Throwable) {
+      Consumer { evt -> method.invoke(instance, evt) }
+    }
   }
 
   /**
@@ -74,11 +103,12 @@ object EventBus {
    */
   @JvmStatic
   fun discoverAndRegister(packageStr: String, excludeFiles: Set<Class<*>> = emptySet()) {
-    val reflections = Reflections(
-      ConfigurationBuilder()
-        .forPackages(packageStr)
-        .setScanners(Scanners.MethodsAnnotated)
-    )
+    val reflections =
+      Reflections(
+        ConfigurationBuilder()
+          .forPackages(packageStr)
+          .setScanners(Scanners.MethodsAnnotated)
+      )
 
     val methods = reflections.getMethodsAnnotatedWith(SubscribeEvent::class.java)
     val seen = mutableSetOf<Class<*>>()
@@ -88,17 +118,18 @@ object EventBus {
       if (!seen.add(clazz) || clazz in excludeFiles) continue
 
       try {
-        val instance = when {
-          clazz.declaredFields.any { it.name == "INSTANCE" } -> {
-            clazz.getDeclaredField("INSTANCE").apply { trySetAccessible() }.get(null)
-          }
+        val instance =
+          when {
+            clazz.declaredFields.any { it.name == "INSTANCE" } -> {
+              clazz.getDeclaredField("INSTANCE").apply { trySetAccessible() }.get(null)
+            }
 
-          else -> {
-            val constructor = clazz.getDeclaredConstructor()
-            constructor.trySetAccessible()
-            constructor.newInstance()
+            else -> {
+              val constructor = clazz.getDeclaredConstructor()
+              constructor.trySetAccessible()
+              constructor.newInstance()
+            }
           }
-        }
 
         register(instance)
       } catch (_: Exception) {
@@ -106,10 +137,20 @@ object EventBus {
     }
   }
 
-  private data class ListenerData(val instance: Any, val method: Method, val priority: Int)
+  private data class ListenerData(
+    val instance: Any,
+    val invoker: Consumer<Event>,
+    val priority: Int,
+    val method: Method,
+  ) : Comparable<ListenerData> {
+    override fun compareTo(other: ListenerData): Int {
+      return other.priority.compareTo(this.priority)
+    }
+  }
 
   /**
-   * Registers a function to be called when an event is posted, alternative to using the @SubscribeEvent annotation.
+   * Registers a function to be called when an event is posted, alternative to using the
+   * @SubscribeEvent annotation.
    *
    * @param eventClass The event to listen for.
    * @param runnable The function to call when the event is posted.
@@ -123,9 +164,8 @@ object EventBus {
 
   @JvmStatic
   fun handleDynamic(event: Event) {
-    dynamicRunnable
-      .filter { (clazz, _) -> clazz.isAssignableFrom(event::class.java) }
-      .forEach { (_, listeners) -> listeners.forEach { it.run() } }
+    dynamicRunnable.filter { (clazz, _) -> clazz.isAssignableFrom(event::class.java) }.forEach { (_, listeners) ->
+      listeners.forEach { it.run() }
+    }
   }
-
 }
