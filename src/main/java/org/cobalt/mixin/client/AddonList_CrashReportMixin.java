@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class AddonList_CrashReportMixin {
 
   @Inject(method = "getDetails(Ljava/lang/StringBuilder;)V", at = @At("HEAD"))
-  private void cobalt$addAddonInfo(StringBuilder crashReportBuilder, CallbackInfo ci) {
+  private void addAddonInfo(StringBuilder crashReportBuilder, CallbackInfo ci) {
     String addons = AddonLoader.INSTANCE.getAddons().stream()
       .map(info -> info.getFirst().getName() + " v" + info.getFirst().getVersion())
       .collect(Collectors.joining(", "));
