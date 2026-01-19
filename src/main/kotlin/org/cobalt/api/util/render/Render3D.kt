@@ -1,16 +1,12 @@
 package org.cobalt.api.util.render
 
-import com.mojang.blaze3d.systems.RenderSystem
 import java.awt.Color
-import kotlin.math.max
-import kotlin.math.min
-import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.ShapeRenderer
+import net.minecraft.gizmos.Gizmos
+import net.minecraft.gizmos.GizmoStyle
+import net.minecraft.util.ARGB
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import org.cobalt.api.event.impl.render.WorldRenderContext
-import org.cobalt.internal.helper.RenderLayers
-import org.joml.Vector3f
 
 object Render3D {
 
@@ -20,38 +16,15 @@ object Render3D {
       return
     }
 
-    val matrix = context.matrixStack ?: return
-    val bufferSource = context.consumers as? MultiBufferSource.BufferSource ?: return
+    val strokeColor = ARGB.color(color.alpha, color.red, color.green, color.blue)
+    val fillColor = ARGB.color(150, color.red, color.green, color.blue)
 
-    val r = color.red / 255f
-    val g = color.green / 255f
-    val b = color.blue / 255f
+    val style = GizmoStyle.strokeAndFill(strokeColor, 2.5f, fillColor)
+    val props = Gizmos.cuboid(box, style)
 
-    val fillLayer = if (esp) RenderLayers.TRIANGLE_STRIP_ESP else RenderLayers.TRIANGLE_STRIP
-    val lineLayer = if (esp) RenderLayers.LINE_LIST_ESP else RenderLayers.LINE_LIST
-
-    matrix.pushPose()
-    with(context.camera.position) { matrix.translate(-x, -y, -z) }
-
-    ShapeRenderer.addChainedFilledBoxVertices(
-      matrix,
-      bufferSource.getBuffer(fillLayer),
-      box.minX, box.minY, box.minZ,
-      box.maxX, box.maxY, box.maxZ,
-      r, g, b, 150 / 255F
-    )
-
-    ShapeRenderer.renderLineBox(
-      matrix.last(),
-      bufferSource.getBuffer(lineLayer),
-      box.minX, box.minY, box.minZ,
-      box.maxX, box.maxY, box.maxZ,
-      r, g, b, 1f
-    )
-
-    matrix.popPose()
-    bufferSource.endBatch(fillLayer)
-    bufferSource.endBatch(lineLayer)
+    if (esp) {
+      props.setAlwaysOnTop()
+    }
   }
 
   @JvmStatic
@@ -65,32 +38,17 @@ object Render3D {
   ) {
     if (!FrustumUtils.isVisible(
         context.frustum,
-        min(start.x, end.x), min(start.y, end.y), min(start.z, end.z),
-        max(start.x, end.x), max(start.y, end.y), max(start.z, end.z)
+        minOf(start.x, end.x), minOf(start.y, end.y), minOf(start.z, end.z),
+        maxOf(start.x, end.x), maxOf(start.y, end.y), maxOf(start.z, end.z)
       )
     ) return
 
-    val matrix = context.matrixStack ?: return
-    val bufferSource = context.consumers as? MultiBufferSource.BufferSource ?: return
-    val layer = if (esp) RenderLayers.LINE_LIST_ESP else RenderLayers.LINE_LIST
-    RenderSystem.lineWidth(thickness)
+    val argbColor = ARGB.color(color.alpha, color.red, color.green, color.blue)
+    val props = Gizmos.line(start, end, argbColor, thickness)
 
-    matrix.pushPose()
-    with(context.camera.position) { matrix.translate(-x, -y, -z) }
-
-    val startOffset = Vector3f(start.x.toFloat(), start.y.toFloat(), start.z.toFloat())
-    val direction = end.subtract(start)
-
-    ShapeRenderer.renderVector(
-      matrix,
-      bufferSource.getBuffer(layer),
-      startOffset,
-      direction,
-      color.rgb
-    )
-
-    matrix.popPose()
-    bufferSource.endBatch(layer)
+    if (esp) {
+      props.setAlwaysOnTop()
+    }
   }
 
 }

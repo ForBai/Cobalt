@@ -22,11 +22,11 @@ import org.cobalt.api.command.annotation.SubCommand
 
 object CommandManager {
 
-  private val commands = mutableListOf<Command>()
+  private val commandsList = mutableListOf<Command>()
 
   @JvmStatic
-  fun register(command: Command) {
-    commands.add(command)
+  fun register(vararg commands: Command) {
+    commands.forEach(commandsList::add)
   }
 
   internal fun dispatchAll() {
@@ -34,7 +34,7 @@ object CommandManager {
   }
 
   private fun dispatchAll(dispatcher: CommandDispatcher<FabricClientCommandSource>, access: CommandBuildContext) {
-    commands.forEach { command ->
+    commandsList.forEach { command ->
       val rootNames = listOf(command.name) + command.aliases
 
       rootNames.forEach { rootName ->
