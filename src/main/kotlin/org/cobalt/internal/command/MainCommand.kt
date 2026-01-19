@@ -1,5 +1,6 @@
 package org.cobalt.internal.command
 
+import kotlin.random.Random
 import org.cobalt.api.command.Command
 import org.cobalt.api.command.annotation.DefaultHandler
 import org.cobalt.api.command.annotation.SubCommand
@@ -28,6 +29,21 @@ internal object MainCommand : Command(
         yawEasing = EasingType.EASE_OUT_EXPO,
         pitchEasing = EasingType.EASE_OUT_EXPO,
         duration = duration.toLong()
+      )
+    )
+  }
+
+  @SubCommand
+  fun rotate() {
+    val yaw = Random.nextFloat() * 360f - 180f
+    val pitch = Random.nextFloat() * 180f - 90f
+
+    RotationExecutor.rotateTo(
+      Rotation(yaw, pitch),
+      TimedEaseStrategy(
+        yawEasing = EasingType.EASE_OUT_EXPO,
+        pitchEasing = EasingType.EASE_OUT_EXPO,
+        duration = 400L
       )
     )
   }
