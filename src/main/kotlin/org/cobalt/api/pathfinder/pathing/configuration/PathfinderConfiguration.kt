@@ -29,6 +29,8 @@ data class PathfinderConfiguration(
   val reopenClosedNodes: Boolean,
 ) {
   companion object {
+    val DEFAULT: PathfinderConfiguration = builder().build()
+
     fun deepCopy(pathfinderConfiguration: PathfinderConfiguration): PathfinderConfiguration {
       return builder()
         .maxIterations(pathfinderConfiguration.maxIterations)
@@ -74,6 +76,7 @@ class PathfinderConfigurationBuilder {
         return object : NavigationPoint {
           override fun isTraversable(): Boolean = true
           override fun hasFloor(): Boolean = true
+          override fun getFloorLevel(): Double = 0.0
           override fun isClimbable(): Boolean = false
           override fun isLiquid(): Boolean = false
         }
