@@ -32,7 +32,7 @@ jobs:
       - name: Capture Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Artifacts
+          name: mod-jar
           path: build/libs/*.jar
           
       - name: Read gradle.properties Release Flags
@@ -49,13 +49,14 @@ jobs:
           MOD_VERSION=$(grep -Po '^modVersion=.*' gradle.properties | cut -d= -f2 | xargs)
 
           echo "SHOULD_RELEASE=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
+          echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "MOD_VERSION=$MOD_VERSION" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         if: steps.release_props.outputs.SHOULD_RELEASE == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: release
+          tag_name: ${{ steps.release_props.outputs.MOD_VERSION }}.${{ steps.release_props.outputs.SHA_SHORT }}
           name: Cobalt v${{ steps.release_props.outputs.MOD_VERSION }}
           files: build/libs/*.jar
           body: ${{ github.event.head_commit.message }}
