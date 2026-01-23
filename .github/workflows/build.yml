@@ -55,7 +55,7 @@ jobs:
         if: steps.release_props.outputs.SHOULD_RELEASE == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.release_props.outputs.MOD_VERSION }}
+          tag_name: release
           name: Cobalt v${{ steps.release_props.outputs.MOD_VERSION }}
           files: build/libs/*.jar
           body: ${{ github.event.head_commit.message }}
