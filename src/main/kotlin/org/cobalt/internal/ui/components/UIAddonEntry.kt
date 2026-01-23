@@ -37,7 +37,7 @@ internal class UIAddonEntry(
 
     NVGRenderer.image(
       addonIcon, x + 20F, y + height / 2F - 15F, 30F, 30F,
-      colorMask = Color(42, 42, 42).rgb
+      colorMask = if (addonIcon != boxIcon) Color(42, 42, 42).rgb else 0
     )
 
     NVGRenderer.text(
