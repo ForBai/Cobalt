@@ -5,3 +5,7 @@ build/
 run/
 docs-versions/
 .vscode/
+bin
+.project
+.classpath
+.settings

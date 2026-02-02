@@ -10,11 +10,13 @@ import org.cobalt.api.util.TickScheduler
 import org.cobalt.internal.command.MainCommand
 import org.cobalt.internal.helper.Config
 import org.cobalt.internal.loader.AddonLoader
+import org.cobalt.internal.ui.screen.UIPreferences
 
 @Suppress("UNUSED")
 object Cobalt : ClientModInitializer {
 
   override fun onInitializeClient() {
+    UIPreferences.load()
     AddonLoader.getAddons().map { it.second }.forEach {
       it.onLoad()
       ModuleManager.addModules(it.getModules())

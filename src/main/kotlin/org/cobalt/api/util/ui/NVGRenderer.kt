@@ -382,6 +382,85 @@ object NVGRenderer {
   }
 
   /**
+   * Draws a soft glow/drop shadow effect behind a rounded rectangle.
+   * Uses NanoVG's box gradient for smooth falloff.
+   *
+   * @param x X position of the rectangle
+   * @param y Y position of the rectangle
+   * @param w Width of the rectangle
+   * @param h Height of the rectangle
+   * @param radius Corner radius of the rectangle
+   * @param blur Amount of blur/spread for the shadow (larger = softer)
+   * @param spread How far the shadow extends beyond the rect
+   * @param color Shadow color in ARGB format
+   */
+  @JvmStatic
+  fun dropShadow(
+    x: Float,
+    y: Float,
+    w: Float,
+    h: Float,
+    radius: Float,
+    blur: Float,
+    spread: Float,
+    color: Int
+  ) {
+    color(color)
+    nvgBoxGradient(
+      vg,
+      x - spread,
+      y - spread,
+      w + spread * 2,
+      h + spread * 2,
+      radius + spread,
+      blur,
+      nvgColor,
+      nvgColor2.also { nvgRGBA(0, 0, 0, 0, it) },
+      nvgPaint
+    )
+
+    nvgBeginPath(vg)
+    nvgRoundedRect(vg, x - spread - blur, y - spread - blur,
+      w + (spread + blur) * 2, h + (spread + blur) * 2,
+      radius + spread + blur)
+    nvgFillPaint(vg, nvgPaint)
+    nvgFill(vg)
+  }
+
+  /**
+   * Draws a glow effect specifically designed for hover states.
+   * Convenience wrapper around dropShadow with common glow parameters.
+   *
+   * @param x X position
+   * @param y Y position
+   * @param w Width
+   * @param h Height
+   * @param radius Corner radius
+   * @param intensity Glow intensity from 0.0 to 1.0
+   * @param color Glow color in ARGB format
+   */
+  @JvmStatic
+  fun glowRect(
+    x: Float,
+    y: Float,
+    w: Float,
+    h: Float,
+    radius: Float,
+    intensity: Float,
+    color: Int
+  ) {
+    if (intensity <= 0f) return
+
+    val blur = 15f * intensity
+    val spread = 5f * intensity
+
+    val alpha = ((color shr 24) and 0xFF) * intensity
+    val glowColor = (color and 0x00FFFFFF) or (alpha.toInt() shl 24)
+
+    dropShadow(x, y, w, h, radius, blur, spread, glowColor)
+  }
+
+  /**
    * Renders text at the specified position.
    *
    * @param text The text to render
