@@ -24,17 +24,18 @@ public class PacketEvent_ConnectionMixin {
 
   @Inject(method = "genericsFtw", at = @At("HEAD"), cancellable = true)
   private static void onPacketReceived(Packet<?> packet, PacketListener listener, CallbackInfo ci) {
-    if (packet instanceof ClientboundBundlePacket bundlePacket) {
-      ci.cancel();
 
-      for (Packet<?> subPacket : bundlePacket.subPackets()) {
-        genericsFtw(subPacket, listener);
-      }
-
+    if (packet instanceof ClientboundBundlePacket) {
       return;
     }
 
-    new PacketEvent.Incoming(packet).post();
+    PacketEvent.Incoming event = new PacketEvent.Incoming(packet);
+    event.post();
+
+    if (event.isCancelled()) {
+      ci.cancel();
+      return;
+    }
 
     if (packet instanceof ClientboundSystemChatPacket) {
       new ChatEvent.Receive(packet).post();
