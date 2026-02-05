@@ -1,10 +1,10 @@
 package org.cobalt.api.util.ui.helper
 
 /**
- * Implementation from OdinFabric by odtheking
+ * Implementation from OdinFabric
  * Original work: https://github.com/odtheking/OdinFabric
  *
- * @author Odin Contributors
+ * @author OdinFabric
  */
 enum class Gradient {
   LeftToRight,

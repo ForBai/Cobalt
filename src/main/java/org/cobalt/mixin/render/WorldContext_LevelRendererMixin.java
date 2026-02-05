@@ -29,6 +29,7 @@ public class WorldContext_LevelRendererMixin {
 
   @Unique
   private final WorldRenderContext ctx = new WorldRenderContext();
+
   @Shadow
   @Final
   private RenderBuffers renderBuffers;
@@ -41,9 +42,14 @@ public class WorldContext_LevelRendererMixin {
   }
 
 
-  @Inject(method = "method_62214", at = @At("RETURN"))
-  private void postRender(GpuBufferSlice gpuBufferSlice, LevelRenderState worldRenderState, ProfilerFiller profiler, Matrix4f matrix4f, ResourceHandle handle, ResourceHandle handle2, boolean bl, Frustum frustum, ResourceHandle handle3, ResourceHandle handle4, CallbackInfo ci) {
+  @ModifyExpressionValue(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;prepareCullFrustum(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/client/renderer/culling/Frustum;"))
+  private Frustum onSetupFrustum(Frustum frustum) {
     ctx.setFrustum(frustum);
+    return frustum;
+  }
+
+  @Inject(method = "method_62214", at = @At("RETURN"))
+  private void postRender(GpuBufferSlice gpuBufferSlice, LevelRenderState levelRenderState, ProfilerFiller profilerFiller, Matrix4f matrix4f, ResourceHandle resourceHandle, ResourceHandle resourceHandle2, boolean bl, ResourceHandle resourceHandle3, ResourceHandle resourceHandle4, CallbackInfo ci) {
     new WorldRenderEvent.Last(ctx).post();
   }
 

@@ -30,33 +30,29 @@ object NotificationManager : NotificationAPI {
     val screenWidth = window.screenWidth.toFloat()
     val screenHeight = window.screenHeight.toFloat()
 
-    try {
-      NVGRenderer.beginFrame(screenWidth, screenHeight)
+    NVGRenderer.beginFrame(screenWidth, screenHeight)
 
-      val toRemove = mutableListOf<UINotification>()
+    val toRemove = mutableListOf<UINotification>()
 
-      notifications.forEachIndexed { index, notification ->
-        if (notification.shouldRemove()) {
-          toRemove.add(notification)
-        } else {
-          val elapsed = System.currentTimeMillis() - notification.getCreatedAt()
-          if (elapsed > notification.getDuration()) {
-            notification.startClosing()
-          }
-          val yOffset = index * (notification.getNotificationHeight() + GAP)
-          val x = screenWidth - 350F - 15F
-          val y = screenHeight - notification.getNotificationHeight() - 15F - yOffset
-          notification.x = x
-          notification.y = y
-          notification.render()
+    notifications.forEachIndexed { index, notification ->
+      if (notification.shouldRemove()) {
+        toRemove.add(notification)
+      } else {
+        val elapsed = System.currentTimeMillis() - notification.getCreatedAt()
+        if (elapsed > notification.getDuration()) {
+          notification.startClosing()
         }
+        val yOffset = index * (notification.getNotificationHeight() + GAP)
+        val x = screenWidth - 350F - 15F
+        val y = screenHeight - notification.getNotificationHeight() - 15F - yOffset
+        notification.x = x
+        notification.y = y
+        notification.render()
       }
-
-      notifications.removeAll(toRemove)
-      NVGRenderer.endFrame()
-    } catch (e: Exception) {
-      e.printStackTrace()
     }
+
+    notifications.removeAll(toRemove)
+    NVGRenderer.endFrame()
   }
 
   override fun clear() {

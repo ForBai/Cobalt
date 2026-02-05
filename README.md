@@ -10,7 +10,7 @@
   <h3 align="center">Cobalt</h3>
 
   ![mod-loader](https://img.shields.io/badge/modloader-Fabric-4682b4?style=for-the-badge&logoColor=white)
-  ![minecraft-version](https://img.shields.io/badge/Minecraft-1.21.10-6BAA57?style=for-the-badge&logoColor=white)
+  ![minecraft-version](https://img.shields.io/badge/Minecraft-1.21.11-6BAA57?style=for-the-badge&logoColor=white)
   ![language](https://img.shields.io/badge/version-1.0.0-FF474C?style=for-the-badge&logoColor=white)
 
 </div>
@@ -18,8 +18,8 @@
 > [!NOTE]
 > This project was made possible thanks to:
 > - [Nebula Client](https://nebulaclient.net) (UI Design)
-> - [Odin](https://github.com/odtheking/Odin) (Settings System)
-> - [Odin-Fabric](https://github.com/odtheking/OdinFabric) & [Vexel](https://github.com/StellariumMC/vexel) (NanoVG Implementation)
+> - [Odin-Fabric](https://github.com/odtheking/Odin) (NVG Impl & Config System)
+> - [Vexel](https://github.com/StellariumMC/vexel) (Texture Tracking)
 
 ## About The Project
 

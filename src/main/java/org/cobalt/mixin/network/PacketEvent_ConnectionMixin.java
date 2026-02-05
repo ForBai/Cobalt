@@ -18,23 +18,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Connection.class)
 public class PacketEvent_ConnectionMixin {
 
-  @Shadow
-  private static <T extends PacketListener> void genericsFtw(Packet<T> packet, PacketListener listener) {
-  }
-
   @Inject(method = "genericsFtw", at = @At("HEAD"), cancellable = true)
   private static void onPacketReceived(Packet<?> packet, PacketListener listener, CallbackInfo ci) {
-    if (packet instanceof ClientboundBundlePacket bundlePacket) {
+    PacketEvent.Incoming event = new PacketEvent.Incoming(packet);
+    event.post();
+
+    if (event.isCancelled()) {
       ci.cancel();
-
-      for (Packet<?> subPacket : bundlePacket.subPackets()) {
-        genericsFtw(subPacket, listener);
-      }
-
       return;
     }
-
-    new PacketEvent.Incoming(packet).post();
 
     if (packet instanceof ClientboundSystemChatPacket) {
       new ChatEvent.Receive(packet).post();
@@ -43,7 +35,13 @@ public class PacketEvent_ConnectionMixin {
 
   @Inject(method = "sendPacket", at = @At("HEAD"))
   private void onPacketSent(Packet<?> packet, ChannelFutureListener listener, boolean flush, CallbackInfo ci) {
-    new PacketEvent.Outgoing(packet).post();
+    PacketEvent.Outgoing event = new PacketEvent.Outgoing(packet);
+    event.post();
+
+    if (event.isCancelled()) {
+      ci.cancel();
+      return;
+    }
 
     if (packet instanceof ServerboundChatPacket) {
       new ChatEvent.Send(packet).post();

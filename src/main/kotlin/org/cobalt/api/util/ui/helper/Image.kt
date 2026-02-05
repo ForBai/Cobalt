@@ -9,25 +9,10 @@ import org.cobalt.api.util.setupConnection
 import org.lwjgl.system.MemoryUtil
 
 /**
- * Represents an image that can be loaded from various sources and used with NanoVG rendering.
- *
- * This class handles loading images from:
- * - HTTP/HTTPS URLs
- * - Local file system paths
- * - Resource paths (from JAR files)
- *
- * The image data is lazily loaded and cached as a ByteBuffer when first accessed.
- * Supports both raster formats (PNG, JPG) and SVG vector graphics.
- *
- * Implementation from OdinFabric by odtheking
+ * Implementation from OdinFabric
  * Original work: https://github.com/odtheking/OdinFabric
  *
- * @param identifier The path or URL to the image resource
- * @param isSVG Whether this image is in SVG format (auto-detected from file extension)
- * @param stream The input stream for reading the image data
- * @param buffer Cached ByteBuffer containing the image data (null until first accessed)
- *
- * @author Odin Contributors
+ * @author OdinFabric
  */
 class Image(
   val identifier: String,

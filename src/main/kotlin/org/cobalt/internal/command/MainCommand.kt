@@ -5,16 +5,14 @@ import org.cobalt.api.command.Command
 import org.cobalt.api.command.annotation.DefaultHandler
 import org.cobalt.api.command.annotation.SubCommand
 import org.cobalt.api.notification.NotificationManager
+import org.cobalt.api.pathfinder.PathExecutor
 import org.cobalt.api.rotation.EasingType
 import org.cobalt.api.rotation.RotationExecutor
 import org.cobalt.api.rotation.strategy.TimedEaseStrategy
 import org.cobalt.api.util.helper.Rotation
 import org.cobalt.internal.ui.screen.UIConfig
 
-internal object MainCommand : Command(
-  name = "cobalt",
-  aliases = arrayOf("cb")
-) {
+internal object MainCommand : Command(name = "cobalt", aliases = arrayOf("cb")) {
 
   @DefaultHandler
   fun main() {
@@ -49,8 +47,17 @@ internal object MainCommand : Command(
   }
 
   @SubCommand
+  fun start(x: Double, y: Double, z: Double) {
+    PathExecutor.start(x, y, z)
+  }
+
+  @SubCommand
+  fun stop() {
+    PathExecutor.stop()
+  }
+
+  @SubCommand
   fun notification(title: String, description: String) {
     NotificationManager.sendNotification(title, description)
   }
-
 }

@@ -5,19 +5,10 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
- * Represents a font that can be loaded from resources and used with NanoVG rendering.
- *
- * This class handles loading font files (like .ttf, .otf) from the classpath and
- * converting them into ByteBuffers that NanoVG can use. Each call to [buffer] creates
- * a new direct ByteBuffer with native byte ordering for optimal performance.
- *
- * Implementation from OdinFabric by odtheking
+ * Implementation from OdinFabric
  * Original work: https://github.com/odtheking/OdinFabric
  *
- * @param name The display name of the font (used for identification and hashing)
- * @param resourcePath The classpath resource path to the font file (e.g., "/assets/fonts/Inter.otf")
- *
- * @author Odin Contributors
+ * @author OdinFabric
  */
 class Font(val name: String, private val resourcePath: String) {
 

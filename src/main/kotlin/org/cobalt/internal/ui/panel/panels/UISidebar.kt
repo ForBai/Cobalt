@@ -24,7 +24,7 @@ internal class UISidebar : UIPanel(
 
   private val steveIcon = NVGRenderer.createImage("/assets/cobalt/steve.png")
   private val userIcon = try {
-    NVGRenderer.createImage("https://mc-heads.net/avatar/${Minecraft.getInstance().user.profileId ?: "a"}/100/face.png")
+    NVGRenderer.createImage("https://mc-heads.net/avatar/${Minecraft.getInstance().user.profileId}/100/face.png")
   } catch (_: Exception) {
     steveIcon
   }

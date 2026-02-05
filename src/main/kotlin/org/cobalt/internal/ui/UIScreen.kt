@@ -1,6 +1,7 @@
 package org.cobalt.internal.ui
 
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import org.cobalt.api.util.TickScheduler

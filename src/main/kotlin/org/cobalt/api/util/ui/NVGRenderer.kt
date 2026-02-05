@@ -9,8 +9,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import net.minecraft.client.Minecraft
-import org.cobalt.api.util.ui.NVGRenderer.beginFrame
-import org.cobalt.api.util.ui.NVGRenderer.endFrame
 import org.cobalt.api.util.ui.NVGRenderer.image
 import org.cobalt.api.util.ui.NVGRenderer.pop
 import org.cobalt.api.util.ui.NVGRenderer.popScissor
@@ -25,21 +23,16 @@ import org.lwjgl.nanovg.NanoSVG.*
 import org.lwjgl.nanovg.NanoVG.*
 import org.lwjgl.nanovg.NanoVGGL3.*
 import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL33C
 import org.lwjgl.stb.STBImage.stbi_load_from_memory
 import org.lwjgl.system.MemoryUtil.memAlloc
 import org.lwjgl.system.MemoryUtil.memFree
 
 /**
- * A renderer that uses NanoVG for 2D graphics rendering.
+ * Implementation from OdinFabric
+ * Original work: https://github.com/odtheking/OdinFabric
  *
- * This object wraps NanoVG functions to make it easier to draw shapes, text,
- * images, and gradients. All drawing must happen between [beginFrame]
- * and [endFrame] calls.
- *
- * Implementation from vexel by StellariumMC
- * Original work: https://github.com/StellariumMC/vexel
- *
- * @author StellariumMC Odin Contributors
+ * @author OdinFabric
  */
 @Suppress("unused")
 object NVGRenderer {
@@ -49,12 +42,14 @@ object NVGRenderer {
 
   private val nvgPaint = NVGPaint.malloc()
   private val nvgColor = NVGColor.malloc()
-  private val nvgColor2: NVGColor = NVGColor.malloc()
+  private val nvgColor2 = NVGColor.malloc()
+
   val interFont = Font("Inter", "/assets/cobalt/fonts/Inter.otf")
 
-  private val images = HashMap<Image, NVGImage>()
   private val fontMap = HashMap<Font, NVGFont>()
   private val fontBounds = FloatArray(4)
+
+  private val images = HashMap<Image, NVGImage>()
 
   private var scissor: Scissor? = null
   private var drawing: Boolean = false
@@ -72,7 +67,6 @@ object NVGRenderer {
    * @param height The height of the frame in pixels
    * @throws IllegalStateException if called while already drawing
    */
-  @JvmStatic
   fun beginFrame(width: Float, height: Float) {
     if (drawing) throw IllegalStateException("[NVGRenderer] Already drawing, but called beginFrame")
 
@@ -86,6 +80,7 @@ object NVGRenderer {
     GlStateManager._viewport(0, 0, framebuffer.width, framebuffer.height)
     GlStateManager._activeTexture(GL30.GL_TEXTURE0)
 
+    GL33C.glBindSampler(0, 0)
     nvgBeginFrame(vg, width, height, 1f)
     nvgTextAlign(vg, NVG_ALIGN_LEFT or NVG_ALIGN_TOP)
     drawing = true
@@ -96,7 +91,6 @@ object NVGRenderer {
    *
    * @throws IllegalStateException if called when not drawing
    */
-  @JvmStatic
   fun endFrame() {
     if (!drawing) throw IllegalStateException("[NVGRenderer] Not drawing, but called endFrame")
     nvgEndFrame(vg)
