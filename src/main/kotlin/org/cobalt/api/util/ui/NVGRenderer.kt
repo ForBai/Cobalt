@@ -1,5 +1,9 @@
 package org.cobalt.api.util.ui
 
+import com.mojang.blaze3d.opengl.GlDevice
+import com.mojang.blaze3d.opengl.GlStateManager
+import com.mojang.blaze3d.opengl.GlTexture
+import com.mojang.blaze3d.systems.RenderSystem
 import java.nio.ByteBuffer
 import kotlin.math.max
 import kotlin.math.min
@@ -18,6 +22,8 @@ import org.lwjgl.nanovg.NVGPaint
 import org.lwjgl.nanovg.NanoSVG.*
 import org.lwjgl.nanovg.NanoVG.*
 import org.lwjgl.nanovg.NanoVGGL3.*
+import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL33C
 import org.lwjgl.stb.STBImage.stbi_load_from_memory
 import org.lwjgl.system.MemoryUtil.memAlloc
 import org.lwjgl.system.MemoryUtil.memFree
@@ -54,17 +60,6 @@ object NVGRenderer {
     require(vg != -1L) { "Failed to initialize NanoVG" }
   }
 
-  fun devicePixelRatio(): Float {
-    return try {
-      val window = mc.window
-      val fbw = window.width
-      val ww = window.screenWidth
-      if (ww == 0) 1f else fbw.toFloat() / ww.toFloat()
-    } catch (_: Throwable) {
-      1f
-    }
-  }
-
   /**
    * Starts a new drawing frame. Call this before any drawing operations.
    *
@@ -75,9 +70,18 @@ object NVGRenderer {
   fun beginFrame(width: Float, height: Float) {
     if (drawing) throw IllegalStateException("[NVGRenderer] Already drawing, but called beginFrame")
 
-    val dpr = devicePixelRatio()
+    val framebuffer = mc.mainRenderTarget
+    val glFramebuffer = (framebuffer.colorTexture as GlTexture).getFbo(
+      (RenderSystem.getDevice() as GlDevice).directStateAccess(),
+      null
+    )
 
-    nvgBeginFrame(vg, width / dpr, height / dpr, dpr)
+    GlStateManager._glBindFramebuffer(GL30.GL_FRAMEBUFFER, glFramebuffer)
+    GlStateManager._viewport(0, 0, framebuffer.width, framebuffer.height)
+    GlStateManager._activeTexture(GL30.GL_TEXTURE0)
+
+    GL33C.glBindSampler(0, 0)
+    nvgBeginFrame(vg, width, height, 1f)
     nvgTextAlign(vg, NVG_ALIGN_LEFT or NVG_ALIGN_TOP)
     drawing = true
   }
@@ -90,6 +94,18 @@ object NVGRenderer {
   fun endFrame() {
     if (!drawing) throw IllegalStateException("[NVGRenderer] Not drawing, but called endFrame")
     nvgEndFrame(vg)
+    GlStateManager._disableCull()
+    GlStateManager._disableDepthTest()
+    GlStateManager._enableBlend()
+    GlStateManager._blendFuncSeparate(770, 771, 1, 0)
+    GlStateManager._glUseProgram(0)
+
+    if (TextureTracker.prevActiveTexture != -1) {
+      GlStateManager._activeTexture(TextureTracker.prevActiveTexture)
+      if (TextureTracker.prevBoundTexture != -1) GlStateManager._bindTexture(TextureTracker.prevBoundTexture)
+    }
+
+    GlStateManager._glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
     drawing = false
   }
 

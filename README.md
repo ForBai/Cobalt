@@ -19,6 +19,7 @@
 > This project was made possible thanks to:
 > - [Nebula Client](https://nebulaclient.net) (UI Design)
 > - [Odin-Fabric](https://github.com/odtheking/Odin) (NVG Impl & Config System)
+> - [Vexel](https://github.com/StellariumMC/vexel) (Texture Tracking)
 
 ## About The Project
 
