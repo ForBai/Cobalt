@@ -88,7 +88,7 @@ class MinecraftNavigationProvider : NavigationPointProvider {
       return state.getValue(FenceGateBlock.OPEN)
     }
 
-    if (block is BaseRailBlock || block is LeavesBlock) {
+    if (block is BaseRailBlock) {
       return true
     }
 
