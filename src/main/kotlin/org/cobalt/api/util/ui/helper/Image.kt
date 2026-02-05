@@ -25,16 +25,6 @@ class Image(
     isSVG = identifier.endsWith(".svg", true)
   }
 
-  /**
-   * Gets the image data as a ByteBuffer, loading it if not already cached.
-   *
-   * The buffer is allocated using off-heap memory and must be manually freed
-   * when no longer needed. The data is cached after the first call, so subsequent
-   * calls return the same buffer without reloading.
-   *
-   * @return ByteBuffer containing the raw image data
-   * @throws IllegalStateException if the buffer is null after attempting to load
-   */
   fun buffer(): ByteBuffer {
     if (buffer == null) {
       val bytes = stream.readBytes()
@@ -56,13 +46,6 @@ class Image(
 
   companion object {
 
-    /**
-     * Creates an input stream for the given path.
-     *
-     * @param path The image path (URL, file path, or resource path)
-     * @return InputStream for reading the image data
-     * @throws FileNotFoundException if the resource cannot be found
-     */
     private fun getStream(path: String): InputStream {
       val trimmedPath = path.trim()
       return if (trimmedPath.startsWith("http")) setupConnection(trimmedPath)

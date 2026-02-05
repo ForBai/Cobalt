@@ -3,10 +3,7 @@ package org.cobalt.api.rotation
 import kotlin.math.*
 
 /**
- * Enum representing various easing functions for smooth animations and transitions.
- * Each enum entry provides a lambda that calculates the eased value for a given time `t`.
- *
- * @property ease The easing function lambda taking a float `t` (0.0 to 1.0) and returning the eased value.
+ * Thank you oblongboot for this superb enum!
  */
 enum class EasingType(val ease: (Float) -> Float) {
 
@@ -83,14 +80,6 @@ enum class EasingType(val ease: (Float) -> Float) {
     }
   });
 
-  /**
-   * Applies the easing function to interpolate between a start and end value.
-   *
-   * @param from The starting value.
-   * @param to The ending value.
-   * @param progress The current progress of the animation (0.0 to 1.0).
-   * @return The interpolated value based on the easing function.
-   */
   fun apply(from: Float, to: Float, progress: Float): Float {
     val t = progress.coerceIn(0f, 1f)
     return from + (to - from) * ease(t)

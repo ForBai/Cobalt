@@ -68,15 +68,6 @@ object RotationExecutor {
     }
   }
 
-  /**
-   * Applies the mouse sensitivity GCD fix to rotations to prevent anti-cheat flags. Credit to oblongboot for this!
-   *
-   * @param rotation The target rotation.
-   * @param prevRotation The previous rotation.
-   * @param min Optional minimum bound.
-   * @param max Optional maximum bound.
-   * @return The adjusted rotation value.
-   */
   private fun applyGCD(rotation: Float, prevRotation: Float, min: Float? = null, max: Float? = null): Float {
     val sensitivity = mc.options.sensitivity().get()
     val f = sensitivity * 0.6 + 0.2
