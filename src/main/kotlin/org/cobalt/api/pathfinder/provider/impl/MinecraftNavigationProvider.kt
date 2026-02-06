@@ -88,7 +88,7 @@ class MinecraftNavigationProvider : NavigationPointProvider {
       return state.getValue(FenceGateBlock.OPEN)
     }
 
-    if (block is BaseRailBlock || block is LeavesBlock) {
+    if (block is BaseRailBlock) {
       return true
     }
 
@@ -120,8 +120,7 @@ class MinecraftNavigationProvider : NavigationPointProvider {
       block == Blocks.GLASS ||
       block is StairBlock ||
       block is SlabBlock ||
-      block is BaseRailBlock ||
-      !state.fluidState.isEmpty
+      block is BaseRailBlock
   }
 
   private fun calculateFloorLevel(level: Level, pos: BlockPos): Double {
