@@ -1,7 +1,7 @@
 package org.cobalt.internal.ui.components.settings
 
-import java.awt.Color
 import org.cobalt.api.module.setting.impl.SliderSetting
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.util.isHoveringOver
@@ -28,15 +28,15 @@ internal class UISliderSetting(private val setting: SliderSetting) : UIComponent
   }
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(42, 42, 42, 50).rgb, 10F)
-    NVGRenderer.hollowRect(x, y, width, height, 1F, Color(42, 42, 42).rgb, 10F)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.controlBg, 10F)
+    NVGRenderer.hollowRect(x, y, width, height, 1F, ThemeManager.currentTheme.controlBorder, 10F)
 
     NVGRenderer.text(
       setting.name,
       x + 20F,
       y + (height / 2F) - 15.5F,
       15F,
-      Color(230, 230, 230).rgb
+      ThemeManager.currentTheme.text
     )
 
     NVGRenderer.text(
@@ -44,7 +44,7 @@ internal class UISliderSetting(private val setting: SliderSetting) : UIComponent
       x + 20F,
       y + (height / 2F) + 2F,
       12F,
-      Color(179, 179, 179).rgb
+      ThemeManager.currentTheme.textSecondary
     )
 
     val sliderX = x + width - 220F
@@ -53,16 +53,16 @@ internal class UISliderSetting(private val setting: SliderSetting) : UIComponent
     val text = String.format("%.2f", setting.value)
     val textWidth = NVGRenderer.textWidth(text, 13F)
 
-    NVGRenderer.rect(sliderX, sliderY, 200F, 4F, Color(60, 60, 60).rgb, 2F)
-    NVGRenderer.rect(sliderX, sliderY, thumbX - sliderX, 4F, Color(61, 94, 149).rgb, 2F)
-    NVGRenderer.circle(thumbX, sliderY + 2F, 6F, Color(61, 94, 149).rgb)
+    NVGRenderer.rect(sliderX, sliderY, 200F, 4F, ThemeManager.currentTheme.sliderTrack, 2F)
+    NVGRenderer.rect(sliderX, sliderY, thumbX - sliderX, 4F, ThemeManager.currentTheme.sliderFill, 2F)
+    NVGRenderer.circle(thumbX, sliderY + 2F, 6F, ThemeManager.currentTheme.sliderThumb)
 
     NVGRenderer.rect(
       sliderX - textWidth - 26F,
       y + (height / 2F) - 12F,
       textWidth + 16F,
       24F,
-      Color(42, 42, 42, 50).rgb,
+      ThemeManager.currentTheme.controlBg,
       4F
     )
     NVGRenderer.hollowRect(
@@ -71,7 +71,7 @@ internal class UISliderSetting(private val setting: SliderSetting) : UIComponent
       textWidth + 16F,
       24F,
       1F,
-      Color(42, 42, 42).rgb,
+      ThemeManager.currentTheme.controlBorder,
       4F
     )
 
@@ -80,7 +80,7 @@ internal class UISliderSetting(private val setting: SliderSetting) : UIComponent
       sliderX - textWidth - 18F,
       y + (height / 2F) - 6F,
       13F,
-      Color(200, 200, 200).rgb
+      ThemeManager.currentTheme.textSecondary
     )
   }
 

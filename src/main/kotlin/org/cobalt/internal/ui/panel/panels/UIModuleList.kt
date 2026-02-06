@@ -1,9 +1,9 @@
 package org.cobalt.internal.ui.panel.panels
 
-import java.awt.Color
 import org.cobalt.api.addon.Addon
 import org.cobalt.api.addon.AddonMetadata
 import org.cobalt.api.module.setting.impl.*
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.components.UIBackButton
@@ -100,13 +100,13 @@ internal class UIModuleList(
   }
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(18, 18, 18).rgb, 10F)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.background, 10F)
     NVGRenderer.line(
       x + width / 4F,
       y + topBar.height / 2 + height * 1F / 8F,
       x + width / 4F,
       y + topBar.height / 2 + height * 7F / 8F,
-      1F, Color(42, 42, 42).rgb
+      1F, ThemeManager.currentTheme.moduleDivider
     )
 
     topBar
@@ -121,7 +121,7 @@ internal class UIModuleList(
       metadata.name,
       x + backButton.width + 35F,
       y + topBar.height + 27.5F,
-      15F, Color(230, 230, 230).rgb
+      15F, ThemeManager.currentTheme.text
     )
 
     val startY = y + topBar.height + backButton.height + 40F

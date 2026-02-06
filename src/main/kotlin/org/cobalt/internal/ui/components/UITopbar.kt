@@ -3,6 +3,7 @@ package org.cobalt.internal.ui.components
 import java.awt.Color
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 
@@ -20,8 +21,8 @@ internal class UITopbar(
   private var lastSearchText = ""
 
   override fun render() {
-    NVGRenderer.text(title, x + 40F, y + (height / 2) - 10F, 20F, Color(230, 230, 230).rgb)
-    NVGRenderer.line(x, y + height, x + width, y + height, 1F, Color(42, 42, 42).rgb)
+    NVGRenderer.text(title, x + 40F, y + (height / 2) - 10F, 20F, ThemeManager.currentTheme.text)
+    NVGRenderer.line(x, y + height, x + width, y + height, 1F, ThemeManager.currentTheme.moduleDivider)
 
     searchBar
       .updateBounds(x + width - 320F, y + 15F)

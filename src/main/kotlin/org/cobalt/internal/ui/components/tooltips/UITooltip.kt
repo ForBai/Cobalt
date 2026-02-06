@@ -1,7 +1,7 @@
 package org.cobalt.internal.ui.components.tooltips
 
-import java.awt.Color
 import org.cobalt.api.util.ui.NVGRenderer
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.animation.ColorAnimation
 import org.cobalt.internal.ui.util.isHoveringOver
@@ -66,20 +66,21 @@ internal class UITooltip(
       val tooltipContent = content()
       val (tooltipX, tooltipY) = calculatePosition(tooltipContent.width, tooltipContent.height)
 
+      val transparentBg = ThemeManager.currentTheme.tooltipBackground and 0x00FFFFFF
       val bgColor = alphaAnim.get(
-        Color(18, 18, 18, 0),
-        Color(18, 18, 18, 240),
+        transparentBg,
+        ThemeManager.currentTheme.tooltipBackground,
         !isHovering
       )
 
-      NVGRenderer.rect(tooltipX, tooltipY, tooltipContent.width, tooltipContent.height, bgColor.rgb, 4F)
+      NVGRenderer.rect(tooltipX, tooltipY, tooltipContent.width, tooltipContent.height, bgColor, 4F)
       NVGRenderer.hollowRect(
         tooltipX,
         tooltipY,
         tooltipContent.width,
         tooltipContent.height,
         1.5F,
-        Color(42, 42, 42).rgb,
+        ThemeManager.currentTheme.tooltipBorder,
         4F
       )
 

@@ -2,6 +2,7 @@ package org.cobalt.internal.ui.panel.panels
 
 import java.awt.Color
 import net.minecraft.client.Minecraft
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.components.tooltips.TooltipPosition
@@ -41,8 +42,8 @@ internal class UISidebar : UIPanel(
   }
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(18, 18, 18).rgb, 10F)
-    NVGRenderer.text("cb", x + width / 2F - 15F, y + 25F, 25F, Color(230, 230, 230).rgb)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.background, 10F)
+    NVGRenderer.text("cb", x + width / 2F - 15F, y + 25F, 25F, ThemeManager.currentTheme.text)
 
     moduleButton
       .setSelected(true)
@@ -62,6 +63,18 @@ internal class UISidebar : UIPanel(
     )
 
     userIconTooltip.updateBounds(userIconX, userIconY, 32F, 32F)
+  }
+
+  override fun mouseClicked(button: Int): Boolean {
+    val userIconX = x + (width / 2F) - 16F
+    val userIconY = y + height - 32F - 20F
+
+    if (isHoveringOver(userIconX, userIconY, 32F, 32F) && button == 0) {
+      UIConfig.swapBodyPanel(UIThemeSelector())
+      return true
+    }
+
+    return super.mouseClicked(button)
   }
 
   private class UIButton(
@@ -85,9 +98,9 @@ internal class UISidebar : UIPanel(
         x, y, width, height,
 
         colorMask = if (hovering || selected)
-          Color(61, 94, 149).rgb
+          ThemeManager.currentTheme.accent
         else
-          Color(120, 120, 120).rgb
+          ThemeManager.currentTheme.textSecondary
       )
     }
 

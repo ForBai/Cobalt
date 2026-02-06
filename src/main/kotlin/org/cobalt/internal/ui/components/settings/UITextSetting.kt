@@ -1,10 +1,10 @@
 package org.cobalt.internal.ui.components.settings
 
-import java.awt.Color
 import net.minecraft.client.Minecraft
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import org.cobalt.api.module.setting.impl.TextSetting
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.util.TextInputHandler
@@ -24,16 +24,16 @@ internal class UITextSetting(private val setting: TextSetting) : UIComponent(
   private var dragging = false
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(42, 42, 42, 50).rgb, 10F)
-    NVGRenderer.hollowRect(x, y, width, height, 1F, Color(42, 42, 42).rgb, 10F)
-    NVGRenderer.text(setting.name, x + 20F, y + 14.5F, 15F, Color(230, 230, 230).rgb)
-    NVGRenderer.text(setting.description, x + 20F, y + 32F, 12F, Color(179, 179, 179).rgb)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.controlBg, 10F)
+    NVGRenderer.hollowRect(x, y, width, height, 1F, ThemeManager.currentTheme.controlBorder, 10F)
+    NVGRenderer.text(setting.name, x + 20F, y + 14.5F, 15F, ThemeManager.currentTheme.text)
+    NVGRenderer.text(setting.description, x + 20F, y + 32F, 12F, ThemeManager.currentTheme.textSecondary)
 
     val inputX = x + width - 280F
     val inputY = y + 15F
-    val borderColor = if (focused) Color(61, 94, 149).rgb else Color(42, 42, 42).rgb
+    val borderColor = if (focused) ThemeManager.currentTheme.accent else ThemeManager.currentTheme.inputBorder
 
-    NVGRenderer.rect(inputX, inputY, 260F, 30F, Color(42, 42, 42, 50).rgb, 5F)
+    NVGRenderer.rect(inputX, inputY, 260F, 30F, ThemeManager.currentTheme.inputBg, 5F)
     NVGRenderer.hollowRect(inputX, inputY, 260F, 30F, 2F, borderColor, 5F)
 
     val textX = inputX + 10F
@@ -44,13 +44,13 @@ internal class UITextSetting(private val setting: TextSetting) : UIComponent(
     NVGRenderer.pushScissor(inputX + 10F, inputY, 240F, 30F)
 
     if (focused) {
-      inputHandler.renderSelection(textX, textY, 13F, 13F, Color(70, 130, 180, 100).rgb)
+      inputHandler.renderSelection(textX, textY, 13F, 13F, ThemeManager.currentTheme.selection)
     }
 
-    NVGRenderer.text(inputHandler.getText(), textX - inputHandler.getTextOffset(), textY, 13F, Color(230, 230, 230).rgb)
+    NVGRenderer.text(inputHandler.getText(), textX - inputHandler.getTextOffset(), textY, 13F, ThemeManager.currentTheme.text)
 
     if (focused) {
-      inputHandler.renderCursor(textX, textY, 13F, Color(230, 230, 230).rgb)
+      inputHandler.renderCursor(textX, textY, 13F, ThemeManager.currentTheme.text)
     }
 
     NVGRenderer.popScissor()

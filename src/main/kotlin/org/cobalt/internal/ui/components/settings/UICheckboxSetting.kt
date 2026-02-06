@@ -1,7 +1,7 @@
 package org.cobalt.internal.ui.components.settings
 
-import java.awt.Color
 import org.cobalt.api.module.setting.impl.CheckboxSetting
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.animation.ColorAnimation
@@ -17,22 +17,22 @@ internal class UICheckboxSetting(private val setting: CheckboxSetting) : UICompo
   private var colorAnim = ColorAnimation(150L)
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(42, 42, 42, 50).rgb, 10F)
-    NVGRenderer.hollowRect(x, y, width, height, 1F, Color(42, 42, 42).rgb, 10F)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.controlBg, 10F)
+    NVGRenderer.hollowRect(x, y, width, height, 1F, ThemeManager.currentTheme.controlBorder, 10F)
 
     NVGRenderer.text(
       setting.name,
       x + 20F,
       y + (height / 2F) - 15.5F,
       15F,
-      Color(230, 230, 230).rgb
+      ThemeManager.currentTheme.text
     )
 
     NVGRenderer.text(
       setting.description,
       x + 20F,
       y + (height / 2F) + 2F,
-      12F, Color(179, 179, 179).rgb
+      12F, ThemeManager.currentTheme.textSecondary
     )
 
     NVGRenderer.rect(
@@ -40,10 +40,10 @@ internal class UICheckboxSetting(private val setting: CheckboxSetting) : UICompo
       y + (height / 2F) - 12.5F,
       25F, 25F,
       colorAnim.get(
-        Color(42, 42, 42, 50),
-        Color(61, 94, 149, 50),
+        ThemeManager.currentTheme.controlBg,
+        ThemeManager.currentTheme.selectedOverlay,
         !setting.value
-      ).rgb, 5F
+      ), 5F
     )
 
     NVGRenderer.hollowRect(
@@ -51,10 +51,10 @@ internal class UICheckboxSetting(private val setting: CheckboxSetting) : UICompo
       y + (height / 2F) - 12.5F,
       25F, 25F, 1.5F,
       colorAnim.get(
-        Color(42, 42, 42),
-        Color(61, 94, 149),
+        ThemeManager.currentTheme.controlBorder,
+        ThemeManager.currentTheme.accent,
         !setting.value
-      ).rgb, 5F
+      ), 5F
     )
 
     if (setting.value) {
@@ -65,10 +65,10 @@ internal class UICheckboxSetting(private val setting: CheckboxSetting) : UICompo
         20F,
         20F,
         colorMask = colorAnim.get(
-          Color(0, 0, 0, 0),
-          Color(61, 94, 149),
+          ThemeManager.currentTheme.transparent,
+          ThemeManager.currentTheme.accent,
           !setting.value
-        ).rgb
+        )
       )
     }
   }

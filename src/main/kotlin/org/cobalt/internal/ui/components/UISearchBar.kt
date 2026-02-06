@@ -1,9 +1,9 @@
 package org.cobalt.internal.ui.components
 
-import java.awt.Color
 import net.minecraft.client.Minecraft
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.util.TextInputHandler
@@ -30,9 +30,9 @@ internal class UISearchBar : UIComponent(
   }
 
   override fun render() {
-    val borderColor = if (focused) Color(61, 94, 149).rgb else Color(42, 42, 42).rgb
+    val borderColor = if (focused) ThemeManager.currentTheme.accent else ThemeManager.currentTheme.controlBorder
 
-    NVGRenderer.rect(x, y, width, height, Color(42, 42, 42, 50).rgb, 5F)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.inputBg, 5F)
     NVGRenderer.hollowRect(x, y, width, height, 2F, borderColor, 5F)
 
     val textX = x + 15F
@@ -43,19 +43,19 @@ internal class UISearchBar : UIComponent(
     NVGRenderer.pushScissor(x + 15F, y + 5F, width - 30F, height - 10F)
 
     if (focused) {
-      inputHandler.renderSelection(textX, textY, 13F, 13F, Color(70, 130, 180, 100).rgb)
+      inputHandler.renderSelection(textX, textY, 13F, 13F, ThemeManager.currentTheme.selection)
     }
 
     val text = inputHandler.getText()
 
     if (text.isEmpty() && !focused) {
-      NVGRenderer.text("Search...", textX, textY, 13F, Color(128, 128, 128).rgb)
+      NVGRenderer.text("Search...", textX, textY, 13F, ThemeManager.currentTheme.searchPlaceholderText)
     } else {
-      NVGRenderer.text(text, textX - inputHandler.getTextOffset(), textY, 13F, Color(230, 230, 230).rgb)
+      NVGRenderer.text(text, textX - inputHandler.getTextOffset(), textY, 13F, ThemeManager.currentTheme.text)
     }
 
     if (focused) {
-      inputHandler.renderCursor(textX, textY, 13F, Color(230, 230, 230).rgb)
+      inputHandler.renderCursor(textX, textY, 13F, ThemeManager.currentTheme.text)
     }
 
     NVGRenderer.popScissor()

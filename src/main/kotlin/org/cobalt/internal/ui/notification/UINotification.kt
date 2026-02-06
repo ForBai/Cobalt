@@ -1,6 +1,6 @@
 package org.cobalt.internal.ui.notification
 
-import java.awt.Color
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.animation.EaseOutAnimation
@@ -89,7 +89,7 @@ internal class UINotification(
       y,
       width,
       finalHeight,
-      Color(25, 25, 25).rgb,
+      ThemeManager.currentTheme.notificationBackground,
       8F
     )
 
@@ -99,7 +99,7 @@ internal class UINotification(
       width,
       finalHeight,
       1.5F,
-      Color(61, 94, 149).rgb,
+      ThemeManager.currentTheme.notificationBorder,
       8F
     )
 
@@ -108,7 +108,7 @@ internal class UINotification(
       finalX + 15F,
       y + 23F,
       14F,
-      Color(230, 230, 230).rgb
+      ThemeManager.currentTheme.notificationText
     )
 
     var yOffset = 37F
@@ -119,7 +119,7 @@ internal class UINotification(
         finalX + 15F,
         y + yOffset,
         12F,
-        Color(179, 179, 179).rgb
+        ThemeManager.currentTheme.notificationTextSecondary
       )
 
       yOffset += 16F

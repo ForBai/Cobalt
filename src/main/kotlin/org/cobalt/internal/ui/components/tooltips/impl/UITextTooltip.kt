@@ -1,6 +1,6 @@
 package org.cobalt.internal.ui.components.tooltips.impl
 
-import java.awt.Color
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 
@@ -24,7 +24,7 @@ internal class UITextTooltip(
       x + width / 2 - textWidth / 2,
       y + height / 2 - textHeight / 2,
       textHeight,
-      Color(230, 230, 230).rgb
+      ThemeManager.currentTheme.tooltipText
     )
   }
 

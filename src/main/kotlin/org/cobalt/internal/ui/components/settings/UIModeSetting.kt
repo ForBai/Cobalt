@@ -1,7 +1,7 @@
 package org.cobalt.internal.ui.components.settings
 
-import java.awt.Color
 import org.cobalt.api.module.setting.impl.ModeSetting
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.animation.ColorAnimation
@@ -34,10 +34,10 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
     }
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(42, 42, 42, 50).rgb, 10F)
-    NVGRenderer.hollowRect(x, y, width, height, 1F, Color(42, 42, 42).rgb, 10F)
-    NVGRenderer.text(setting.name, x + 20F, y + 14.5F, 15F, Color(230, 230, 230).rgb)
-    NVGRenderer.text(setting.description, x + 20F, y + 32F, 12F, Color(179, 179, 179).rgb)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.controlBg, 10F)
+    NVGRenderer.hollowRect(x, y, width, height, 1F, ThemeManager.currentTheme.controlBorder, 10F)
+    NVGRenderer.text(setting.name, x + 20F, y + 14.5F, 15F, ThemeManager.currentTheme.text)
+    NVGRenderer.text(setting.description, x + 20F, y + 32F, 12F, ThemeManager.currentTheme.textSecondary)
     renderButton()
   }
 
@@ -52,13 +52,25 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
       wasHovering = hovering
     }
 
-    val bgColor = colorAnim.get(Color(42, 42, 42, 50), Color(61, 94, 149, 50), !hovering)
-    val borderColor = colorAnim.get(Color(42, 42, 42), Color(61, 94, 149), !hovering)
-    val textColor = colorAnim.get(Color(230, 230, 230), Color(255, 255, 255), !hovering)
+    val bgColor = colorAnim.get(
+      ThemeManager.currentTheme.controlBg,
+      ThemeManager.currentTheme.selectedOverlay,
+      !hovering
+    )
+    val borderColor = colorAnim.get(
+      ThemeManager.currentTheme.controlBorder,
+      ThemeManager.currentTheme.accent,
+      !hovering
+    )
+    val textColor = colorAnim.get(
+      ThemeManager.currentTheme.text,
+      ThemeManager.currentTheme.textPrimary,
+      !hovering
+    )
 
-    NVGRenderer.rect(buttonX, buttonY, currentButtonWidth, 30F, bgColor.rgb, 5F)
-    NVGRenderer.hollowRect(buttonX, buttonY, currentButtonWidth, 30F, 2F, borderColor.rgb, 5F)
-    NVGRenderer.text(setting.options[setting.value], buttonX + 10F, buttonY + 9F, 13F, textColor.rgb)
+    NVGRenderer.rect(buttonX, buttonY, currentButtonWidth, 30F, bgColor, 5F)
+    NVGRenderer.hollowRect(buttonX, buttonY, currentButtonWidth, 30F, 2F, borderColor, 5F)
+    NVGRenderer.text(setting.options[setting.value], buttonX + 10F, buttonY + 9F, 13F, textColor)
 
     val caretX = buttonX + currentButtonWidth - 22.5F
     val caretY = buttonY + 7F
@@ -67,10 +79,10 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
       NVGRenderer.push()
       NVGRenderer.translate(caretX + 8F, caretY + 8F)
       NVGRenderer.rotate(Math.PI.toFloat())
-      NVGRenderer.image(caretIcon, -8F, -8F, 16F, 16F, 0F, textColor.rgb)
+      NVGRenderer.image(caretIcon, -8F, -8F, 16F, 16F, 0F, textColor)
       NVGRenderer.pop()
     } else {
-      NVGRenderer.image(caretIcon, caretX, caretY, 16F, 16F, 0F, textColor.rgb)
+      NVGRenderer.image(caretIcon, caretX, caretY, 16F, 16F, 0F, textColor)
     }
   }
 
@@ -87,8 +99,8 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
 
     scrollHandler.setMaxScroll(contentHeight, visibleHeight)
 
-    NVGRenderer.rect(dropdownX, dropdownY, currentDropdownWidth, visibleHeight, Color(32, 32, 32).rgb, 5F)
-    NVGRenderer.hollowRect(dropdownX, dropdownY, currentDropdownWidth, visibleHeight, 2F, Color(61, 94, 149).rgb, 5F)
+    NVGRenderer.rect(dropdownX, dropdownY, currentDropdownWidth, visibleHeight, ThemeManager.currentTheme.panel, 5F)
+    NVGRenderer.hollowRect(dropdownX, dropdownY, currentDropdownWidth, visibleHeight, 2F, ThemeManager.currentTheme.accent, 5F)
 
     NVGRenderer.pushScissor(dropdownX, dropdownY, currentDropdownWidth, visibleHeight)
 
@@ -105,7 +117,7 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
           optionY,
           currentDropdownWidth - 10F - (if (needsScroll) 8F else 0F),
           25F,
-          Color(61, 94, 149, 50).rgb,
+          ThemeManager.currentTheme.selectedOverlay,
           5F
         )
       } else if (isHovering) {
@@ -114,12 +126,12 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
           optionY,
           currentDropdownWidth - 10F - (if (needsScroll) 8F else 0F),
           25F,
-          Color(42, 42, 42).rgb,
+          ThemeManager.currentTheme.controlBg,
           5F
         )
       }
 
-      val textColor = if (isSelected) Color(61, 94, 149).rgb else Color(230, 230, 230).rgb
+    val textColor = if (isSelected) ThemeManager.currentTheme.accent else ThemeManager.currentTheme.text
       NVGRenderer.text(option, dropdownX + 17F, optionY + 6.5F, 13F, textColor)
     }
 
@@ -132,7 +144,7 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
       val thumbHeight = (visibleHeight / contentHeight) * scrollbarHeight
       val thumbY = scrollbarY + (scrollOffset / scrollHandler.getMaxScroll()) * (scrollbarHeight - thumbHeight)
 
-      NVGRenderer.rect(scrollbarX, thumbY, 4F, thumbHeight, Color(61, 94, 149).rgb, 2F)
+      NVGRenderer.rect(scrollbarX, thumbY, 4F, thumbHeight, ThemeManager.currentTheme.scrollbarThumb, 2F)
     }
   }
 

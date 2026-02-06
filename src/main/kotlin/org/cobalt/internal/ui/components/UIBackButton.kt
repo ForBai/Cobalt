@@ -1,6 +1,6 @@
 package org.cobalt.internal.ui.components
 
-import java.awt.Color
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.animation.ColorAnimation
@@ -8,7 +8,9 @@ import org.cobalt.internal.ui.panel.panels.UIAddonList
 import org.cobalt.internal.ui.screen.UIConfig
 import org.cobalt.internal.ui.util.isHoveringOver
 
-internal class UIBackButton : UIComponent(
+internal class UIBackButton(
+  private val onClick: (() -> Unit)? = null
+) : UIComponent(
   x = 0F,
   y = 0F,
   width = 30F,
@@ -27,39 +29,37 @@ internal class UIBackButton : UIComponent(
     }
 
     val bgColor = colorAnim.get(
-      Color(42, 42, 42, 50),
-      Color(61, 94, 149, 50),
+      ThemeManager.currentTheme.controlBg,
+      ThemeManager.currentTheme.selectedOverlay,
       !hovering
     )
 
     val borderColor = colorAnim.get(
-      Color(42, 42, 42),
-      Color(61, 94, 149),
+      ThemeManager.currentTheme.controlBorder,
+      ThemeManager.currentTheme.accent,
       !hovering
     )
 
     val arrowColor = colorAnim.get(
-      Color(230, 230, 230),
-
-      Color(61, 94, 149),
-
+      ThemeManager.currentTheme.text,
+      ThemeManager.currentTheme.accent,
       !hovering
     )
 
-    NVGRenderer.rect(x, y, width, height, bgColor.rgb, 5F)
-    NVGRenderer.hollowRect(x, y, width, height, 2F, borderColor.rgb, 5F)
+    NVGRenderer.rect(x, y, width, height, bgColor, 5F)
+    NVGRenderer.hollowRect(x, y, width, height, 2F, borderColor, 5F)
     NVGRenderer.image(
       leftArrow,
       x + width / 2F - 10F,
       y + height / 2F - 10F,
       20F, 20F, 0F,
-      arrowColor.rgb
+      arrowColor
     )
   }
 
   override fun mouseClicked(button: Int): Boolean {
     if (isHoveringOver(x, y, width, height) && button == 0) {
-      UIConfig.swapBodyPanel(UIAddonList())
+      onClick?.invoke() ?: UIConfig.swapBodyPanel(UIAddonList())
     }
 
     return false

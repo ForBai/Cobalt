@@ -1,8 +1,8 @@
 package org.cobalt.internal.ui.components
 
-import java.awt.Color
 import org.cobalt.api.addon.Addon
 import org.cobalt.api.addon.AddonMetadata
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.loader.AddonLoader
 import org.cobalt.internal.ui.UIComponent
@@ -25,19 +25,19 @@ internal class UIAddonEntry(
   override fun render() {
     NVGRenderer.rect(
       x, y, width, height,
-      Color(24, 24, 24).rgb, 10F
+      ThemeManager.currentTheme.panel, 10F
     )
 
     NVGRenderer.hollowRect(
       x, y, width, height,
-      1F, Color(42, 42, 42).rgb, 10F
+      1F, ThemeManager.currentTheme.controlBorder, 10F
     )
 
-    NVGRenderer.rect(x + 10F, y + height / 2F - 25F, 50F, 50F, Color(30, 30, 30).rgb, 5F)
+    NVGRenderer.rect(x + 10F, y + height / 2F - 25F, 50F, 50F, ThemeManager.currentTheme.inset, 5F)
 
     NVGRenderer.image(
       addonIcon, x + 20F, y + height / 2F - 15F, 30F, 30F,
-      colorMask = if (addonIcon == boxIcon) Color(42, 42, 42).rgb else 0
+      colorMask = if (addonIcon == boxIcon) ThemeManager.currentTheme.controlBorder else 0
     )
 
     NVGRenderer.text(
@@ -45,7 +45,7 @@ internal class UIAddonEntry(
       x + 75F,
       y + (height - 29F) / 2F,
       14F,
-      Color(230, 230, 230).rgb
+      ThemeManager.currentTheme.text
     )
 
     NVGRenderer.text(
@@ -53,7 +53,7 @@ internal class UIAddonEntry(
       x + 75F,
       y + (height - 29F) / 2F + 17F,
       12F,
-      Color(179, 179, 179).rgb
+      ThemeManager.currentTheme.textSecondary
     )
   }
 

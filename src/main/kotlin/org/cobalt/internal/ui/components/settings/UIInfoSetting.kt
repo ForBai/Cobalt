@@ -1,8 +1,8 @@
 package org.cobalt.internal.ui.components.settings
 
-import java.awt.Color
 import org.cobalt.api.module.setting.impl.InfoSetting
 import org.cobalt.api.module.setting.impl.InfoType
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 
@@ -16,27 +16,27 @@ internal class UIInfoSetting(private val setting: InfoSetting) : UIComponent(
   private fun getColors(): Triple<Int, Int, Int> {
     return when (setting.type) {
       InfoType.INFO -> Triple(
-        Color(61, 94, 149, 25).rgb,
-        Color(61, 94, 149, 150).rgb,
-        Color(61, 94, 149, 255).rgb
+        ThemeManager.currentTheme.infoBackground,
+        ThemeManager.currentTheme.infoBorder,
+        ThemeManager.currentTheme.infoIcon
       )
 
       InfoType.WARNING -> Triple(
-        Color(184, 134, 11, 25).rgb,
-        Color(184, 134, 11, 150).rgb,
-        Color(184, 134, 11, 255).rgb
+        ThemeManager.currentTheme.warningBackground,
+        ThemeManager.currentTheme.warningBorder,
+        ThemeManager.currentTheme.warningIcon
       )
 
       InfoType.SUCCESS -> Triple(
-        Color(34, 139, 34, 25).rgb,
-        Color(34, 139, 34, 150).rgb,
-        Color(34, 139, 34, 255).rgb
+        ThemeManager.currentTheme.successBackground,
+        ThemeManager.currentTheme.successBorder,
+        ThemeManager.currentTheme.successIcon
       )
 
       InfoType.ERROR -> Triple(
-        Color(178, 34, 34, 25).rgb,
-        Color(178, 34, 34, 150).rgb,
-        Color(178, 34, 34, 255).rgb
+        ThemeManager.currentTheme.errorBackground,
+        ThemeManager.currentTheme.errorBorder,
+        ThemeManager.currentTheme.errorIcon
       )
     }
   }
@@ -73,7 +73,7 @@ internal class UIInfoSetting(private val setting: InfoSetting) : UIComponent(
         x + 50F,
         titleY,
         15F,
-        Color(230, 230, 230).rgb
+        ThemeManager.currentTheme.text
       )
 
       val textY = y + (height / 2F) + 5F
@@ -82,7 +82,7 @@ internal class UIInfoSetting(private val setting: InfoSetting) : UIComponent(
         x + 50F,
         textY,
         12F,
-        Color(179, 179, 179).rgb
+        ThemeManager.currentTheme.textSecondary
       )
     } else {
       val textY = y + (height / 2F) - 6F
@@ -91,7 +91,7 @@ internal class UIInfoSetting(private val setting: InfoSetting) : UIComponent(
         x + 50F,
         textY,
         13F,
-        Color(200, 200, 200).rgb
+        ThemeManager.currentTheme.textSecondary
       )
     }
   }

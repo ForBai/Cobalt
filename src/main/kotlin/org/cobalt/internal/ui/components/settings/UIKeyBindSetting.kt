@@ -1,9 +1,9 @@
 package org.cobalt.internal.ui.components.settings
 
 import com.mojang.blaze3d.platform.InputConstants
-import java.awt.Color
 import net.minecraft.client.input.KeyEvent
 import org.cobalt.api.module.setting.impl.KeyBindSetting
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.util.isHoveringOver
@@ -19,15 +19,15 @@ internal class UIKeyBindSetting(private val setting: KeyBindSetting) : UICompone
   private var isListening = false
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(42, 42, 42, 50).rgb, 10F)
-    NVGRenderer.hollowRect(x, y, width, height, 1F, Color(42, 42, 42).rgb, 10F)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.controlBg, 10F)
+    NVGRenderer.hollowRect(x, y, width, height, 1F, ThemeManager.currentTheme.controlBorder, 10F)
 
     NVGRenderer.text(
       setting.name,
       x + 20F,
       y + (height / 2F) - 15.5F,
       15F,
-      Color(230, 230, 230).rgb
+      ThemeManager.currentTheme.text
     )
 
     NVGRenderer.text(
@@ -35,7 +35,7 @@ internal class UIKeyBindSetting(private val setting: KeyBindSetting) : UICompone
       x + 20F,
       y + (height / 2F) + 2F,
       12F,
-      Color(179, 179, 179).rgb
+      ThemeManager.currentTheme.textSecondary
     )
 
     val text = if (isListening) "Listening..." else setting.keyName.uppercase()
@@ -43,12 +43,12 @@ internal class UIKeyBindSetting(private val setting: KeyBindSetting) : UICompone
 
     NVGRenderer.rect(
       x + width - textWidth - 40F, y + (height / 2F) - 12.5F,
-      textWidth + 20F, 25F, Color(42, 42, 42, 50).rgb, 5F
+      textWidth + 20F, 25F, ThemeManager.currentTheme.controlBg, 5F
     )
 
     NVGRenderer.hollowRect(
       x + width - textWidth - 40F, y + (height / 2F) - 12.5F,
-      textWidth + 20F, 25F, 1F, Color(42, 42, 42).rgb, 5F
+      textWidth + 20F, 25F, 1F, ThemeManager.currentTheme.controlBorder, 5F
     )
 
     NVGRenderer.text(
@@ -56,7 +56,7 @@ internal class UIKeyBindSetting(private val setting: KeyBindSetting) : UICompone
       x + width - textWidth - 30F,
       y + (height / 2F) - 7.5F,
       15F,
-      if (isListening) Color(42, 42, 42).rgb else Color(230, 230, 230).rgb
+      if (isListening) ThemeManager.currentTheme.textSecondary else ThemeManager.currentTheme.text
     )
   }
 

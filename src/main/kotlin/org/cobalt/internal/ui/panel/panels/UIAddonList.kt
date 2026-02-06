@@ -1,6 +1,7 @@
 package org.cobalt.internal.ui.panel.panels
 
 import java.awt.Color
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.loader.AddonLoader
 import org.cobalt.internal.ui.UIComponent
@@ -45,7 +46,7 @@ internal class UIAddonList : UIPanel(
   }
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(18, 18, 18).rgb, 10F)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.background, 10F)
 
     topBar
       .updateBounds(x, y)

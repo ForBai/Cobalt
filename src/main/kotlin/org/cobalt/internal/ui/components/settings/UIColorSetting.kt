@@ -2,6 +2,7 @@ package org.cobalt.internal.ui.components.settings
 
 import java.awt.Color
 import org.cobalt.api.module.setting.impl.ColorSetting
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.api.util.ui.helper.Gradient
 import org.cobalt.internal.ui.UIComponent
@@ -37,14 +38,14 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
   }
 
   override fun render() {
-    NVGRenderer.rect(x, y, width, height, Color(42, 42, 42, 50).rgb, 10F)
-    NVGRenderer.hollowRect(x, y, width, height, 1F, Color(42, 42, 42).rgb, 10F)
+    NVGRenderer.rect(x, y, width, height, ThemeManager.currentTheme.controlBg, 10F)
+    NVGRenderer.hollowRect(x, y, width, height, 1F, ThemeManager.currentTheme.controlBorder, 10F)
 
-    NVGRenderer.text(setting.name, x + 20F, y + (height / 2F) - 15.5F, 15F, Color(230, 230, 230).rgb)
-    NVGRenderer.text(setting.description, x + 20F, y + (height / 2F) + 2F, 12F, Color(179, 179, 179).rgb)
+    NVGRenderer.text(setting.name, x + 20F, y + (height / 2F) - 15.5F, 15F, ThemeManager.currentTheme.text)
+    NVGRenderer.text(setting.description, x + 20F, y + (height / 2F) + 2F, 12F, ThemeManager.currentTheme.textSecondary)
 
     NVGRenderer.rect(x + width - 50F, y + (height / 2F) - 15F, 30F, 30F, setting.value, 6F)
-    NVGRenderer.hollowRect(x + width - 50F, y + (height / 2F) - 15F, 30F, 30F, 1.5F, Color(42, 42, 42).rgb, 6F)
+    NVGRenderer.hollowRect(x + width - 50F, y + (height / 2F) - 15F, 30F, 30F, 1.5F, ThemeManager.currentTheme.controlBorder, 6F)
   }
 
   fun drawColorPicker() {
@@ -56,8 +57,8 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
     val by = py + 10F
     val size = 180F
 
-    NVGRenderer.rect(px, py, 200F, 250F, Color(28, 28, 28).rgb, 8F)
-    NVGRenderer.hollowRect(px, py, 200F, 250F, 2F, Color(42, 42, 42).rgb, 8F)
+    NVGRenderer.rect(px, py, 200F, 250F, ThemeManager.currentTheme.panel, 8F)
+    NVGRenderer.hollowRect(px, py, 200F, 250F, 2F, ThemeManager.currentTheme.controlBorder, 8F)
 
     val hueColor = Color.HSBtoRGB(hue, 1f, 1f)
 
@@ -67,8 +68,8 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
       by,
       size,
       size,
-      Color(255, 255, 255, 255).rgb,
-      Color(255, 255, 255, 0).rgb,
+      ThemeManager.currentTheme.white,
+      ThemeManager.currentTheme.transparent,
       Gradient.LeftToRight,
       0F
     )
@@ -77,18 +78,18 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
       by,
       size,
       size,
-      Color(0, 0, 0, 0).rgb,
-      Color(0, 0, 0, 255).rgb,
+      ThemeManager.currentTheme.transparent,
+      ThemeManager.currentTheme.black,
       Gradient.TopToBottom,
       0F
     )
-    NVGRenderer.hollowRect(bx, by, size, size, 1F, Color(42, 42, 42).rgb, 0F)
+    NVGRenderer.hollowRect(bx, by, size, size, 1F, ThemeManager.currentTheme.controlBorder, 0F)
 
     val selectorX = bx + saturation * size
     val selectorY = by + (1f - lightness) * size
 
-    NVGRenderer.circle(selectorX, selectorY, 5F, Color(255, 255, 255).rgb)
-    NVGRenderer.circle(selectorX, selectorY, 3F, Color(0, 0, 0).rgb)
+    NVGRenderer.circle(selectorX, selectorY, 5F, ThemeManager.currentTheme.white)
+    NVGRenderer.circle(selectorX, selectorY, 3F, ThemeManager.currentTheme.black)
 
     val hueY = py + size + 20F
 
@@ -101,20 +102,20 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
       NVGRenderer.gradientRect(x1, hueY, x2 - x1, 15F, color1, color2, Gradient.LeftToRight, 0F)
     }
 
-    NVGRenderer.hollowRect(bx, hueY, size, 15F, 1F, Color(42, 42, 42).rgb, 0F)
-    NVGRenderer.rect(bx + hue * size - 2F, hueY - 2F, 4F, 19F, Color(255, 255, 255).rgb, 1F)
+    NVGRenderer.hollowRect(bx, hueY, size, 15F, 1F, ThemeManager.currentTheme.controlBorder, 0F)
+    NVGRenderer.rect(bx + hue * size - 2F, hueY - 2F, 4F, 19F, ThemeManager.currentTheme.white, 1F)
 
     val opacityY = hueY + 25F
 
-    NVGRenderer.rect(bx, opacityY, size, 15F, Color(255, 255, 255).rgb, 0F)
+    NVGRenderer.rect(bx, opacityY, size, 15F, ThemeManager.currentTheme.white, 0F)
 
     for (i in 0..17) {
       if (i % 2 == 0) {
-        NVGRenderer.rect(bx + i * 10F, opacityY, 10F, 7.5F, Color(200, 200, 200).rgb, 0F)
-        NVGRenderer.rect(bx + i * 10F, opacityY + 7.5F, 10F, 7.5F, Color(255, 255, 255).rgb, 0F)
+        NVGRenderer.rect(bx + i * 10F, opacityY, 10F, 7.5F, ThemeManager.currentTheme.textSecondary, 0F)
+        NVGRenderer.rect(bx + i * 10F, opacityY + 7.5F, 10F, 7.5F, ThemeManager.currentTheme.white, 0F)
       } else {
-        NVGRenderer.rect(bx + i * 10F, opacityY, 10F, 7.5F, Color(255, 255, 255).rgb, 0F)
-        NVGRenderer.rect(bx + i * 10F, opacityY + 7.5F, 10F, 7.5F, Color(200, 200, 200).rgb, 0F)
+        NVGRenderer.rect(bx + i * 10F, opacityY, 10F, 7.5F, ThemeManager.currentTheme.white, 0F)
+        NVGRenderer.rect(bx + i * 10F, opacityY + 7.5F, 10F, 7.5F, ThemeManager.currentTheme.textSecondary, 0F)
       }
     }
 
@@ -123,8 +124,8 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
     val transparentColor = Color(currentColor and 0x00FFFFFF, true).rgb
 
     NVGRenderer.gradientRect(bx, opacityY, size, 15F, transparentColor, opaqueColor, Gradient.LeftToRight, 0F)
-    NVGRenderer.hollowRect(bx, opacityY, size, 15F, 1F, Color(42, 42, 42).rgb, 0F)
-    NVGRenderer.rect(bx + opacity * size - 2F, opacityY - 2F, 4F, 19F, Color(255, 255, 255).rgb, 1F)
+    NVGRenderer.hollowRect(bx, opacityY, size, 15F, 1F, ThemeManager.currentTheme.controlBorder, 0F)
+    NVGRenderer.rect(bx + opacity * size - 2F, opacityY - 2F, 4F, 19F, ThemeManager.currentTheme.white, 1F)
   }
 
   override fun mouseClicked(button: Int): Boolean {

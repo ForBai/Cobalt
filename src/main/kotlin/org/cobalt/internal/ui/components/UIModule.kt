@@ -1,8 +1,8 @@
 package org.cobalt.internal.ui.components
 
-import java.awt.Color
 import org.cobalt.api.module.Module
 import org.cobalt.api.module.setting.Setting
+import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.animation.ColorAnimation
@@ -25,23 +25,23 @@ internal class UIModule(
   private val xOffsetAnimation = EaseOutAnimation(200L)
 
   override fun render() {
-    val opaqueColor = colorAnimation.get(Color(0, 0, 0, 0), Color(61, 94, 149, 50), !selected)
-    val mainColor = colorAnimation.get(Color(0, 0, 0, 0), Color(61, 94, 149), !selected)
-    val textColor = colorAnimation.get(Color(230, 230, 230), Color(61, 94, 149), !selected)
+    val opaqueColor = colorAnimation.get(ThemeManager.currentTheme.transparent, ThemeManager.currentTheme.selectedOverlay, !selected)
+    val mainColor = colorAnimation.get(ThemeManager.currentTheme.transparent, ThemeManager.currentTheme.accent, !selected)
+    val textColor = colorAnimation.get(ThemeManager.currentTheme.text, ThemeManager.currentTheme.accent, !selected)
     val xOffset = xOffsetAnimation.get(0F, 10F, !selected)
 
     if (selected) {
-      NVGRenderer.rect(x, y, width, height, opaqueColor.rgb, 5F)
-      NVGRenderer.hollowRect(x, y, width, height, 1F, mainColor.rgb, 5F)
+      NVGRenderer.rect(x, y, width, height, opaqueColor, 5F)
+      NVGRenderer.hollowRect(x, y, width, height, 1F, mainColor, 5F)
       NVGRenderer.image(
         selectedIcon, x + 10F, y + height / 2 - 7F, 13F, 13F,
-        colorMask = mainColor.rgb
+        colorMask = mainColor
       )
     }
 
     NVGRenderer.text(
       module.name, x + 20F + xOffset, y + height / 2F - 6.5F, 13F,
-      textColor.rgb
+      textColor
     )
   }
 
