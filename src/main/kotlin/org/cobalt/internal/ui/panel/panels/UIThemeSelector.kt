@@ -190,20 +190,20 @@ internal class UIThemeSelector : UIPanel(
     }
 
     override fun mouseClicked(button: Int): Boolean {
-      if (isHoveringOver(x, y, width, height) && button == 0) {
-        handleSelection()
-        return true
+      if (isHoveringOver(x, y, width, height)) {
+        if (button == 0) {
+          handleSelection()
+          return true
+        }else if (button == 1 && theme is CustomTheme) {
+          UIConfig.swapBodyPanel(UIThemeEditor(theme))
+          return true
+        }
       }
-
       return false
     }
 
     open fun handleSelection() {
-      if (theme is CustomTheme) {
-        UIConfig.swapBodyPanel(UIThemeEditor(theme))
-      } else {
         ThemeManager.setTheme(theme)
-      }
     }
 
   }
