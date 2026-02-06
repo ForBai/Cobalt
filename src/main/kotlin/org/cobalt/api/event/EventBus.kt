@@ -115,14 +115,6 @@ object EventBus {
     }
   }
 
-  /**
-   * Registers all functions with the @SubscribeEvent annotation in the given package.
-   *
-   * @param packageStr The package to scan for @SubscribeEvent annotated functions.
-   * @param excludeFiles A set of classes to exclude from registration.
-   *
-   * @author oblongboot, awrped
-   */
   @JvmStatic
   fun discoverAndRegister(packageStr: String, excludeFiles: Set<Class<*>> = emptySet()) {
     val path = packageStr.replace('.', '/')
@@ -210,15 +202,6 @@ object EventBus {
     }
   }
 
-  /**
-   * Registers a function to be called when an event is posted, alternative to using the
-   * @SubscribeEvent annotation.
-   *
-   * @param eventClass The event to listen for.
-   * @param runnable The function to call when the event is posted.
-   *
-   * @author oblongboot
-   */
   @JvmStatic
   fun registerEvent(eventClass: Class<out Event>, runnable: Runnable) {
     dynamicRunnable.computeIfAbsent(eventClass) { mutableListOf() }.add(runnable)

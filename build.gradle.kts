@@ -1,11 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.net.URI
-import java.io.ByteArrayOutputStream
 
 plugins {
   kotlin("jvm")
   id("fabric-loom")
-  id("org.jetbrains.dokka") version "1.9.20"
   `maven-publish`
   java
 }
@@ -54,11 +51,39 @@ dependencies {
   implementation("meteordevelopment:discord-ipc:1.1")
   include("meteordevelopment:discord-ipc:1.1")
 
-  dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
-  dokkaHtmlPlugin("org.jetbrains.dokka:versioning-plugin:1.9.20")
-
   implementation("org.reflections:reflections:0.10.2")
   include("org.reflections:reflections:0.10.2")
+}
+
+publishing {
+  publications {
+    create<MavenPublication>("mavenJava") {
+      artifact(tasks.named("remapJar")) {
+        builtBy(tasks.named("remapJar"))
+      }
+
+      artifact(tasks.named("kotlinSourcesJar")) {
+        builtBy(tasks.named("remapSourcesJar"))
+      }
+
+      pom {
+        name.set(modName)
+        description.set("Hypixel Skyblock QoL mod")
+        url.set("https://github.com/CobaltScripts/Cobalt")
+      }
+    }
+  }
+
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/CobaltScripts/Cobalt")
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
+  }
 }
 
 tasks {
@@ -70,77 +95,11 @@ tasks {
     }
   }
 
-  publishing {
-    publications {
-      create<MavenPublication>("mavenJava") {
-        artifact(remapJar) {
-          builtBy(remapJar)
-        }
-        artifact(kotlinSourcesJar) {
-          builtBy(remapSourcesJar)
-        }
-      }
-    }
-  }
-
   compileKotlin {
     compilerOptions {
       jvmTarget = JvmTarget.JVM_21
     }
   }
-}
-
-tasks.dokkaHtml {
-  outputDirectory.set(currentVersionDir)
-  moduleName.set(project.name)
-  moduleVersion.set(currentVersion)
-
-  pluginsMapConfiguration.set(
-    mapOf(
-      "org.jetbrains.dokka.versioning.VersioningPlugin" to """
-        {
-          "version": "$currentVersion",
-          "olderVersionsDir": "${docVersionsDir.absolutePath.replace("\\", "\\\\")}",
-          "renderVersionsNavigationOnAllPages": true
-        }
-      """.trimIndent()
-    )
-  )
-
-  suppressObviousFunctions.set(true)
-  suppressInheritedMembers.set(true)
-
-  dokkaSourceSets {
-    named("main") {
-      jdkVersion.set(21)
-
-      perPackageOption {
-        matchingRegex.set("org\\.cobalt\\.internal($|\\.).*")
-        suppress.set(true)
-      }
-
-      sourceLink {
-        localDirectory.set(file("src/main/kotlin"))
-        remoteUrl.set(URI("https://github.com/CobaltScripts/Cobalt/blob/${getGitBranch()}/src/main/kotlin").toURL())
-        remoteLineSuffix.set("#L")
-      }
-
-      externalDocumentationLink {
-        url.set(URI("https://docs.oracle.com/javase/8/docs/api/").toURL())
-      }
-    }
-  }
-}
-
-fun getGitBranch(): String {
-  val out = ByteArrayOutputStream()
-
-  providers.exec {
-    commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
-    standardOutput = out
-  }
-
-  return out.toString().trim()
 }
 
 java {
