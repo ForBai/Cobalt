@@ -55,43 +55,26 @@ dependencies {
   include("org.reflections:reflections:0.10.2")
 }
 
-publishing {
-  publications {
-    create<MavenPublication>("mavenJava") {
-      artifact(tasks.named("remapJar")) {
-        builtBy(tasks.named("remapJar"))
-      }
-
-      artifact(tasks.named("kotlinSourcesJar")) {
-        builtBy(tasks.named("remapSourcesJar"))
-      }
-
-      pom {
-        name.set(modName)
-        description.set("Hypixel Skyblock QoL mod")
-        url.set("https://github.com/CobaltScripts/Cobalt")
-      }
-    }
-  }
-
-  repositories {
-    maven {
-      name = "GitHubPackages"
-      url = uri("https://maven.pkg.github.com/CobaltScripts/Cobalt")
-      credentials {
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
-      }
-    }
-  }
-}
-
 tasks {
   processResources {
     inputs.property("version", project.version)
     filesMatching("fabric.mod.json") {
       expand(getProperties())
       expand(mutableMapOf("version" to project.version))
+    }
+  }
+
+  publishing {
+    publications {
+      create<MavenPublication>("mavenJava") {
+        artifact(remapJar) {
+          builtBy(remapJar)
+        }
+
+        artifact(kotlinSourcesJar) {
+          builtBy(remapSourcesJar)
+        }
+      }
     }
   }
 
