@@ -1,5 +1,6 @@
 package org.cobalt.internal.ui.panel.panels
 
+import java.awt.Color
 import org.cobalt.api.module.setting.impl.ColorSetting
 import org.cobalt.api.module.setting.impl.InfoSetting
 import org.cobalt.api.module.setting.impl.TextSetting
@@ -46,6 +47,10 @@ internal class UIThemeEditor(
     ColorSetting("Text Secondary", "Secondary text", palette.textSecondary)
   )
   private val paletteEditors = paletteSettings.map { UIColorSetting(it) }
+
+  private val generateButton = UIGenerateButton {
+    applyPalette()
+  }
 
   private data class ThemeColorField(
     val label: String,
@@ -142,6 +147,7 @@ internal class UIThemeEditor(
     components.add(nameEditor)
     components.add(UIInfoSetting(InfoSetting("Palette", "")))
     components.addAll(paletteEditors)
+    components.add(generateButton)
     components.addAll(colorEditors)
   }
 
@@ -162,7 +168,8 @@ internal class UIThemeEditor(
 
     val list = listOf<UIComponent>(nameEditor) + 
                listOf(UIInfoSetting(InfoSetting("Palette", ""))) + 
-               paletteEditors + 
+               paletteEditors +
+               listOf(generateButton) +
                colorEditors
                
     scrollHandler.setMaxScroll(layout.contentHeight(list.size) + 20F, visibleHeight)
@@ -177,7 +184,6 @@ internal class UIThemeEditor(
     paletteEditors.forEach { it.drawColorPicker() }
     colorEditors.filterIsInstance<UIColorSetting>().forEach { it.drawColorPicker() }
 
-    applyPalette()
     syncTheme()
   }
 
@@ -195,79 +201,70 @@ internal class UIThemeEditor(
   }
 
   private fun applyPalette() {
-    if (palette.primary != paletteSettings[0].value ||
-      palette.background != paletteSettings[1].value ||
-      palette.surface != paletteSettings[2].value ||
-      palette.error != paletteSettings[3].value ||
-      palette.text != paletteSettings[4].value ||
-      palette.textSecondary != paletteSettings[5].value
-    ) {
-      palette.primary = paletteSettings[0].value
-      palette.background = paletteSettings[1].value
-      palette.surface = paletteSettings[2].value
-      palette.error = paletteSettings[3].value
-      palette.text = paletteSettings[4].value
-      palette.textSecondary = paletteSettings[5].value
+    palette.primary = paletteSettings[0].value
+    palette.background = paletteSettings[1].value
+    palette.surface = paletteSettings[2].value
+    palette.error = paletteSettings[3].value
+    palette.text = paletteSettings[4].value
+    palette.textSecondary = paletteSettings[5].value
 
-      palette.applyTo(theme)
+    palette.applyTo(theme)
 
-      allColorFields.forEach { field ->
-        field.apply(field.setting.value)
-        when (field.label) {
-          "Background" -> field.setting.value = theme.background
-          "Panel" -> field.setting.value = theme.panel
-          "Inset" -> field.setting.value = theme.inset
-          "Overlay" -> field.setting.value = theme.overlay
-          "Text" -> field.setting.value = theme.text
-          "Text Primary" -> field.setting.value = theme.textPrimary
-          "Text Secondary" -> field.setting.value = theme.textSecondary
-          "Text Disabled" -> field.setting.value = theme.textDisabled
-          "Text Placeholder" -> field.setting.value = theme.textPlaceholder
-          "Text On Accent" -> field.setting.value = theme.textOnAccent
-          "Accent" -> field.setting.value = theme.accent
-          "Accent Primary" -> field.setting.value = theme.accentPrimary
-          "Accent Secondary" -> field.setting.value = theme.accentSecondary
-          "Selection" -> field.setting.value = theme.selection
-          "Control Background" -> field.setting.value = theme.controlBg
-          "Control Border" -> field.setting.value = theme.controlBorder
-          "Input Background" -> field.setting.value = theme.inputBg
-          "Input Border" -> field.setting.value = theme.inputBorder
-          "Success" -> field.setting.value = theme.success
-          "Warning" -> field.setting.value = theme.warning
-          "Error" -> field.setting.value = theme.error
-          "Info" -> field.setting.value = theme.info
-          "Scrollbar Thumb" -> field.setting.value = theme.scrollbarThumb
-          "Scrollbar Track" -> field.setting.value = theme.scrollbarTrack
-          "Slider Track" -> field.setting.value = theme.sliderTrack
-          "Slider Fill" -> field.setting.value = theme.sliderFill
-          "Slider Thumb" -> field.setting.value = theme.sliderThumb
-          "Tooltip Background" -> field.setting.value = theme.tooltipBackground
-          "Tooltip Border" -> field.setting.value = theme.tooltipBorder
-          "Tooltip Text" -> field.setting.value = theme.tooltipText
-          "Notification Background" -> field.setting.value = theme.notificationBackground
-          "Notification Border" -> field.setting.value = theme.notificationBorder
-          "Notification Text" -> field.setting.value = theme.notificationText
-          "Notification Text Secondary" -> field.setting.value = theme.notificationTextSecondary
-          "Info Background" -> field.setting.value = theme.infoBackground
-          "Info Border" -> field.setting.value = theme.infoBorder
-          "Info Icon" -> field.setting.value = theme.infoIcon
-          "Warning Background" -> field.setting.value = theme.warningBackground
-          "Warning Border" -> field.setting.value = theme.warningBorder
-          "Warning Icon" -> field.setting.value = theme.warningIcon
-          "Success Background" -> field.setting.value = theme.successBackground
-          "Success Border" -> field.setting.value = theme.successBorder
-          "Success Icon" -> field.setting.value = theme.successIcon
-          "Error Background" -> field.setting.value = theme.errorBackground
-          "Error Border" -> field.setting.value = theme.errorBorder
-          "Error Icon" -> field.setting.value = theme.errorIcon
-          "Selection Text" -> field.setting.value = theme.selectionText
-          "Search Placeholder Text" -> field.setting.value = theme.searchPlaceholderText
-          "Module Divider" -> field.setting.value = theme.moduleDivider
-          "Selected Overlay" -> field.setting.value = theme.selectedOverlay
-          "White" -> field.setting.value = theme.white
-          "Black" -> field.setting.value = theme.black
-          "Transparent" -> field.setting.value = theme.transparent
-        }
+    allColorFields.forEach { field ->
+      when (field.label) {
+        "Background" -> field.setting.value = theme.background
+        "Panel" -> field.setting.value = theme.panel
+        "Inset" -> field.setting.value = theme.inset
+        "Overlay" -> field.setting.value = theme.overlay
+        "Text" -> field.setting.value = theme.text
+        "Text Primary" -> field.setting.value = theme.textPrimary
+        "Text Secondary" -> field.setting.value = theme.textSecondary
+        "Text Disabled" -> field.setting.value = theme.textDisabled
+        "Text Placeholder" -> field.setting.value = theme.textPlaceholder
+        "Text On Accent" -> field.setting.value = theme.textOnAccent
+        "Accent" -> field.setting.value = theme.accent
+        "Accent Primary" -> field.setting.value = theme.accentPrimary
+        "Accent Secondary" -> field.setting.value = theme.accentSecondary
+        "Selection" -> field.setting.value = theme.selection
+        "Control Background" -> field.setting.value = theme.controlBg
+        "Control Border" -> field.setting.value = theme.controlBorder
+        "Input Background" -> field.setting.value = theme.inputBg
+        "Input Border" -> field.setting.value = theme.inputBorder
+        "Success" -> field.setting.value = theme.success
+        "Warning" -> field.setting.value = theme.warning
+        "Error" -> field.setting.value = theme.error
+        "Info" -> field.setting.value = theme.info
+        "Scrollbar Thumb" -> field.setting.value = theme.scrollbarThumb
+        "Scrollbar Track" -> field.setting.value = theme.scrollbarTrack
+        "Slider Track" -> field.setting.value = theme.sliderTrack
+        "Slider Fill" -> field.setting.value = theme.sliderFill
+        "Slider Thumb" -> field.setting.value = theme.sliderThumb
+        "Tooltip Background" -> field.setting.value = theme.tooltipBackground
+        "Tooltip Border" -> field.setting.value = theme.tooltipBorder
+        "Tooltip Text" -> field.setting.value = theme.tooltipText
+        "Notification Background" -> field.setting.value = theme.notificationBackground
+        "Notification Border" -> field.setting.value = theme.notificationBorder
+        "Notification Text" -> field.setting.value = theme.notificationText
+        "Notification Text Secondary" -> field.setting.value = theme.notificationTextSecondary
+        "Info Background" -> field.setting.value = theme.infoBackground
+        "Info Border" -> field.setting.value = theme.infoBorder
+        "Info Icon" -> field.setting.value = theme.infoIcon
+        "Warning Background" -> field.setting.value = theme.warningBackground
+        "Warning Border" -> field.setting.value = theme.warningBorder
+        "Warning Icon" -> field.setting.value = theme.warningIcon
+        "Success Background" -> field.setting.value = theme.successBackground
+        "Success Border" -> field.setting.value = theme.successBorder
+        "Success Icon" -> field.setting.value = theme.successIcon
+        "Error Background" -> field.setting.value = theme.errorBackground
+        "Error Border" -> field.setting.value = theme.errorBorder
+        "Error Icon" -> field.setting.value = theme.errorIcon
+        "Selection Text" -> field.setting.value = theme.selectionText
+        "Search Placeholder Text" -> field.setting.value = theme.searchPlaceholderText
+        "Module Divider" -> field.setting.value = theme.moduleDivider
+        "Selected Overlay" -> field.setting.value = theme.selectedOverlay
+        "White" -> field.setting.value = theme.white
+        "Black" -> field.setting.value = theme.black
+        "Transparent" -> field.setting.value = theme.transparent
       }
     }
   }
@@ -279,5 +276,39 @@ internal class UIThemeEditor(
     }
 
     ThemeManager.setTheme(theme)
+  }
+
+  private class UIGenerateButton(
+    private val onClick: () -> Unit
+  ) : UIComponent(
+    x = 0F,
+    y = 0F,
+    width = 627.5F,
+    height = 40F
+  ) {
+    override fun render() {
+      val isHovering = isHoveringOver(x, y, width, height)
+      val color = if (isHovering) ThemeManager.currentTheme.accent else ThemeManager.currentTheme.controlBg
+      val borderColor = ThemeManager.currentTheme.controlBorder
+
+      NVGRenderer.rect(x, y, width, height, color, 5F)
+      NVGRenderer.hollowRect(x, y, width, height, 1.5F, borderColor, 5F)
+      
+      NVGRenderer.text(
+        "Generate from Palette",
+        x + width / 2 - NVGRenderer.textWidth("Generate from Palette", 14F) / 2,
+        y + height / 2 - 7F,
+        14F,
+        ThemeManager.currentTheme.text
+      )
+    }
+
+    override fun mouseClicked(button: Int): Boolean {
+      if (button == 0 && isHoveringOver(x, y, width, height)) {
+        onClick()
+        return true
+      }
+      return false
+    }
   }
 }
