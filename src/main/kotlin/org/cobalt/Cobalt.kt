@@ -27,7 +27,6 @@ object Cobalt : ClientModInitializer {
       TickScheduler, MainCommand, NotificationManager,
       RotationExecutor,
     ).forEach { EventBus.register(it) }
-
     Config.loadModulesConfig()
     EventBus.register(this)
     println("Cobalt Mod Initialized")

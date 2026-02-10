@@ -18,7 +18,7 @@ object EventBus {
   private val listeners = ConcurrentHashMap<Class<*>, List<ListenerData>>()
 
   private val registered = ConcurrentHashMap.newKeySet<Any>()
-  private val dynamicRunnable = ConcurrentHashMap<Class<out Event>, MutableList<Runnable>>()
+  private val dynamicRunnable = ConcurrentHashMap<Class<out Event>, MutableList<(Event) -> Unit>>()
 
   @JvmStatic
   fun register(obj: Any) {
@@ -203,15 +203,17 @@ object EventBus {
   }
 
   @JvmStatic
-  fun registerEvent(eventClass: Class<out Event>, runnable: Runnable) {
-    dynamicRunnable.computeIfAbsent(eventClass) { mutableListOf() }.add(runnable)
+  fun <T : Event> registerEvent(eventClass: Class<T>, listener: (T) -> Unit) {
+    dynamicRunnable.computeIfAbsent(eventClass) { mutableListOf() }.add { event -> listener(event as T) }
   }
 
+
   @JvmStatic
-  fun handleDynamic(event: Event) {
-    dynamicRunnable.filter { (clazz, _) -> clazz.isAssignableFrom(event::class.java) }.forEach { (_, listeners) ->
-      listeners.forEach { it.run() }
-    }
+  private fun handleDynamic(event: Event) {
+    dynamicRunnable.filter { (clazz, _) -> clazz.isAssignableFrom(event::class.java) }
+      .forEach { (_, listeners) ->
+        listeners.forEach { it(event) }
+      }
   }
 
 }
