@@ -1,12 +1,13 @@
 package org.cobalt.api.hud
 
 import org.cobalt.api.module.setting.Setting
+import org.cobalt.api.module.setting.SettingsContainer
 
 abstract class HudModule(
   val id: String,
   val name: String,
   val description: String = "",
-) {
+) : SettingsContainer {
 
   var enabled: Boolean = true
   var anchor: HudAnchor = HudAnchor.TOP_LEFT
@@ -21,11 +22,11 @@ abstract class HudModule(
 
   private val settingsList = mutableListOf<Setting<*>>()
 
-  fun addSetting(vararg settings: Setting<*>) {
+  override fun addSetting(vararg settings: Setting<*>) {
     settingsList.addAll(listOf(*settings))
   }
 
-  fun getSettings(): List<Setting<*>> {
+  override fun getSettings(): List<Setting<*>> {
     return settingsList
   }
 

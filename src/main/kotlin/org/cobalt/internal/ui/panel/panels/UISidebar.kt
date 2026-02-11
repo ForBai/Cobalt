@@ -10,6 +10,7 @@ import org.cobalt.internal.ui.components.tooltips.UITooltip
 import org.cobalt.internal.ui.components.tooltips.impl.UITextTooltip
 import org.cobalt.internal.ui.panel.UIPanel
 import org.cobalt.internal.ui.screen.UIConfig
+import org.cobalt.internal.ui.screen.UIHudEditor
 import org.cobalt.internal.ui.util.isHoveringOver
 
 internal class UISidebar : UIPanel(
@@ -21,7 +22,15 @@ internal class UISidebar : UIPanel(
 
   private val moduleButton = UIButton("/assets/cobalt/icons/box.svg") {
     UIConfig.swapBodyPanel(UIAddonList())
+    isHudActive = false
   }
+
+  private val hudButton = UIButton("/assets/cobalt/icons/palette.svg") {
+    UIHudEditor().openUI()
+    isHudActive = true
+  }
+
+  private var isHudActive = false
 
   private val steveIcon = NVGRenderer.createImage("/assets/cobalt/steve.png")
   private val userIcon = try {
@@ -37,7 +46,7 @@ internal class UISidebar : UIPanel(
 
   init {
     components.addAll(
-      listOf(moduleButton)
+      listOf(moduleButton, hudButton)
     )
   }
 
@@ -46,8 +55,13 @@ internal class UISidebar : UIPanel(
     NVGRenderer.text("cb", x + width / 2F - 15F, y + 25F, 25F, ThemeManager.currentTheme.text)
 
     moduleButton
-      .setSelected(true)
+      .setSelected(!isHudActive)
       .updateBounds(x + (width / 2F) - (moduleButton.width / 2F), y + 75F)
+      .render()
+
+    hudButton
+      .setSelected(isHudActive)
+      .updateBounds(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F)
       .render()
 
     val userIconX = x + (width / 2F) - 16F

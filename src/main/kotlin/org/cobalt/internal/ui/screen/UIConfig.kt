@@ -8,6 +8,7 @@ import org.cobalt.api.event.annotation.SubscribeEvent
 import org.cobalt.api.event.impl.render.NvgEvent
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.helper.Config
+import org.cobalt.internal.helper.HudConfig
 import org.cobalt.internal.ui.UIScreen
 import org.cobalt.internal.ui.animation.BounceAnimation
 import org.cobalt.internal.ui.components.tooltips.TooltipManager
@@ -111,6 +112,7 @@ internal object UIConfig : UIScreen() {
 
   override fun onClose() {
     Config.saveModulesConfig()
+    HudConfig.save()
     wasClosed = true
     super.onClose()
   }

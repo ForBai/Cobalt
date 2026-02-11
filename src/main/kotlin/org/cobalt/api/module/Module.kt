@@ -1,16 +1,17 @@
 package org.cobalt.api.module
 
 import org.cobalt.api.module.setting.Setting
+import org.cobalt.api.module.setting.SettingsContainer
 
-abstract class Module(val name: String) {
+abstract class Module(val name: String) : SettingsContainer {
 
   private val settingsList = mutableListOf<Setting<*>>()
 
-  fun addSetting(vararg settings: Setting<*>) {
+  override fun addSetting(vararg settings: Setting<*>) {
     settingsList.addAll(listOf(*settings))
   }
 
-  fun getSettings(): List<Setting<*>> {
+  override fun getSettings(): List<Setting<*>> {
     return settingsList
   }
 
