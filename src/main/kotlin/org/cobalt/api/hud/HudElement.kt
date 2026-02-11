@@ -3,16 +3,36 @@ package org.cobalt.api.hud
 import org.cobalt.api.module.setting.Setting
 import org.cobalt.api.module.setting.SettingsContainer
 
+/**
+ * A HUD overlay element rendered on the in-game screen.
+ *
+ * Created via the [hudElement][org.cobalt.api.hud.hudElement] DSL inside a [Module][org.cobalt.api.module.Module].
+ * Each element is independently draggable, scalable, and toggleable through the HUD editor.
+ * Position, scale, enabled state, and settings are automatically persisted.
+ *
+ * @property id Unique identifier used for serialization. Must be stable across versions.
+ * @property name Display name shown in the HUD editor and settings popup.
+ * @property description Optional description shown in the UI.
+ */
 abstract class HudElement(
   val id: String,
   val name: String,
   val description: String = "",
 ) : SettingsContainer {
 
+  /** Whether this element is rendered. Toggled by the user in the HUD editor. */
   var enabled: Boolean = true
+
+  /** Screen anchor point. Determines which edge/corner offsets are relative to. */
   var anchor: HudAnchor = HudAnchor.TOP_LEFT
+
+  /** Horizontal offset from the [anchor] edge, in pixels. */
   var offsetX: Float = 10f
+
+  /** Vertical offset from the [anchor] edge, in pixels. */
   var offsetY: Float = 10f
+
+  /** Render scale factor, clamped to 0.5-3.0 on load. */
   var scale: Float = 1.0f
 
   protected open val defaultAnchor: HudAnchor = HudAnchor.TOP_LEFT
@@ -30,8 +50,17 @@ abstract class HudElement(
     return settingsList
   }
 
+  /** Returns the unscaled width of this element in pixels. */
   abstract fun getBaseWidth(): Float
+
+  /** Returns the unscaled height of this element in pixels. */
   abstract fun getBaseHeight(): Float
+
+  /**
+   * Called every frame when this element is [enabled].
+   * Draw using [NVGRenderer][org.cobalt.api.util.ui.NVGRenderer] — coordinates are pre-translated,
+   * so draw relative to (0, 0).
+   */
   abstract fun render(screenX: Float, screenY: Float, scale: Float)
 
   fun getScaledWidth(): Float = getBaseWidth() * scale
@@ -44,6 +73,7 @@ abstract class HudElement(
       screenWidth, screenHeight
     )
 
+  /** Resets position, anchor, and scale to the defaults set in the DSL builder. */
   fun resetPosition() {
     anchor = defaultAnchor
     offsetX = defaultOffsetX

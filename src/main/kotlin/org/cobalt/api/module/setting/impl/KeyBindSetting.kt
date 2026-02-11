@@ -6,6 +6,10 @@ import org.cobalt.api.module.setting.Setting
 import org.cobalt.api.util.helper.KeyBind
 import org.lwjgl.glfw.GLFW
 
+/**
+ * Key binding setting. Value is a [KeyBind] — use `value.isPressed()` to check for key presses.
+ * Default to `KeyBind(-1)` for unbound.
+ */
 class KeyBindSetting(
   name: String,
   description: String,

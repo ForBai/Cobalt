@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import org.cobalt.api.module.setting.Setting
 
+/** Boolean toggle setting. Renders as a checkbox in the UI. */
 class CheckboxSetting(
   name: String,
   description: String,

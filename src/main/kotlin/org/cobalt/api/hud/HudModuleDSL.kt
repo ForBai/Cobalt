@@ -5,20 +5,30 @@ import org.cobalt.api.module.setting.Setting
 import org.cobalt.api.module.setting.SettingsContainer
 
 /**
- * DSL extension to create a HUD element inside a Module.
+ * Creates and registers a [HudElement] on this module using a DSL builder.
  *
- * Example:
+ * Usage:
  * ```
  * class MyModule : Module("My Module") {
- *   val speedHud = hudElement("speed", "Speed Display") {
+ *   val hud = hudElement("my-hud", "My HUD", "Shows something") {
+ *     anchor = HudAnchor.TOP_RIGHT
+ *     offsetX = 10f
+ *     offsetY = 10f
+ *
+ *     val showDecimals = setting(CheckboxSetting("Decimals", "", false))
+ *
  *     width { 80f }
  *     height { 20f }
- *     anchor = HudAnchor.TOP_RIGHT
- *     val showDecimals = setting(CheckboxSetting("Decimals", "", false))
- *     render { x, y, scale -> /* use showDecimals.value */ }
+ *     render { screenX, screenY, scale -> /* use showDecimals.value */ }
  *   }
  * }
  * ```
+ *
+ * @param id Stable unique identifier used for serialization.
+ * @param name Display name shown in the HUD editor.
+ * @param description Optional description for the settings popup.
+ * @param init Builder block — configure position, settings, size, and rendering.
+ * @return The constructed [HudElement] instance.
  */
 fun Module.hudElement(
   id: String,
@@ -33,6 +43,13 @@ fun Module.hudElement(
   return element
 }
 
+/**
+ * Builder for configuring a [HudElement] inside the [hudElement] DSL block.
+ *
+ * Register settings with [setting] and read their values via `.value`.
+ * Do **not** use `by` delegation for settings inside this builder — it won't compile
+ * because Kotlin local delegates require a different type signature.
+ */
 class HudElementBuilder(
   private val id: String,
   private val name: String,
@@ -41,9 +58,17 @@ class HudElementBuilder(
 
   private var widthProvider: () -> Float = { 100f }
   private var heightProvider: () -> Float = { 20f }
+
+  /** Screen anchor point. Determines which edge/corner offsets are relative to. */
   var anchor: HudAnchor = HudAnchor.TOP_LEFT
+
+  /** Horizontal offset from the [anchor] edge, in pixels. */
   var offsetX: Float = 10f
+
+  /** Vertical offset from the [anchor] edge, in pixels. */
   var offsetY: Float = 10f
+
+  /** Default render scale (clamped to 0.5-3.0 on load). */
   var scale: Float = 1.0f
   private var renderLambda: ((Float, Float, Float) -> Unit)? = null
 
@@ -57,19 +82,30 @@ class HudElementBuilder(
     return settingsList
   }
 
+  /** Sets the dynamic width provider. Called every frame — can return values based on setting state. */
   fun width(provider: () -> Float) {
     widthProvider = provider
   }
 
+  /** Sets the dynamic height provider. Called every frame — can return values based on setting state. */
   fun height(provider: () -> Float) {
     heightProvider = provider
   }
 
+  /**
+   * Registers a setting on this HUD element and returns it.
+   * Access the current value via `.value`:
+   * ```
+   * val speed = setting(SliderSetting("Speed", "Movement speed", 1.0, 0.1, 5.0))
+   * render { _, _, _ -> /* use speed.value */ }
+   * ```
+   */
   fun <T, S : Setting<T>> setting(setting: S): S {
     addSetting(setting)
     return setting
   }
 
+  /** Sets the render callback, called every frame when this element is enabled. */
   fun render(block: (screenX: Float, screenY: Float, scale: Float) -> Unit) {
     renderLambda = block
   }

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import org.cobalt.api.module.setting.Setting
 
+/** ARGB color picker setting. Value is an ARGB integer (e.g. `0xFFFF0000.toInt()` for red). */
 class ColorSetting(
   name: String,
   description: String,

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import org.cobalt.api.module.setting.Setting
 
+/** String input setting. Renders as a text field in the UI. */
 class TextSetting(
   name: String,
   description: String,

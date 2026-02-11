@@ -1,5 +1,15 @@
 package org.cobalt.api.hud
 
+/**
+ * Screen anchor point for positioning a [HudElement].
+ *
+ * Offsets push the element **inward** from the anchor edge:
+ * - LEFT anchors: `offsetX` moves right from the left edge
+ * - RIGHT anchors: `offsetX` moves left from the right edge
+ * - TOP anchors: `offsetY` moves down from the top edge
+ * - BOTTOM anchors: `offsetY` moves up from the bottom edge
+ * - CENTER anchors: offsets adjust from the screen center
+ */
 enum class HudAnchor {
   TOP_LEFT,
   TOP_CENTER,
