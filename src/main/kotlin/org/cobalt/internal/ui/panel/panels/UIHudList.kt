@@ -1,7 +1,7 @@
 package org.cobalt.internal.ui.panel.panels
 
 import java.awt.Color
-import org.cobalt.api.hud.HudModule
+import org.cobalt.api.hud.HudElement
 import org.cobalt.api.hud.HudModuleManager
 import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
@@ -22,7 +22,7 @@ internal class UIHudList : UIPanel(
 ) {
 
   private val topBar = UITopbar("HUD Modules")
-  private val allEntries = HudModuleManager.getModules().map { HudModuleEntry(it) }
+  private var allEntries = HudModuleManager.getElements().map { HudElementEntry(it) }
   private var entries = allEntries
 
   private val scrollHandler = ScrollHandler()
@@ -47,6 +47,13 @@ internal class UIHudList : UIPanel(
     HudModuleManager.resetAllPositions()
   }
 
+  fun refreshEntries() {
+    allEntries = HudModuleManager.getElements().map { HudElementEntry(it) }
+    entries = allEntries
+    components.removeAll { it is HudElementEntry }
+    components.addAll(0, allEntries)
+  }
+
   init {
     components.addAll(allEntries)
     components.add(editButton)
@@ -59,8 +66,8 @@ internal class UIHudList : UIPanel(
       } else {
         val searchLower = searchText.lowercase()
         allEntries.filter {
-          it.module.name.lowercase().contains(searchLower) ||
-            it.module.description.lowercase().contains(searchLower)
+    it.module.name.lowercase().contains(searchLower) ||
+             it.module.description.lowercase().contains(searchLower)
         }
       }
     }
@@ -148,8 +155,8 @@ internal class UIHudList : UIPanel(
     }
   }
 
-  private class HudModuleEntry(
-    val module: HudModule,
+  private class HudElementEntry(
+    val module: HudElement,
   ) : UIComponent(0F, 0F, 890F, 60F) {
 
     private var expanded = false
@@ -158,6 +165,11 @@ internal class UIHudList : UIPanel(
       when (it) {
         is CheckboxSetting -> UICheckboxSetting(it)
         is ColorSetting -> UIColorSetting(it)
+        is InfoSetting -> UIInfoSetting(it)
+        is KeyBindSetting -> UIKeyBindSetting(it)
+        is ModeSetting -> UIModeSetting(it)
+        is RangeSetting -> UIRangeSetting(it)
+        is SliderSetting -> UISliderSetting(it)
         else -> UITextSetting(it as TextSetting)
       }
     }

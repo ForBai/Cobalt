@@ -1,50 +1,51 @@
 package org.cobalt.api.hud.modules
 
 import org.cobalt.api.hud.HudAnchor
-import org.cobalt.api.hud.HudModule
+import org.cobalt.api.hud.hudElement
+import org.cobalt.api.module.Module
 import org.cobalt.api.module.setting.impl.TextSetting
 import org.cobalt.api.module.setting.impl.ColorSetting
 import org.cobalt.api.module.setting.impl.CheckboxSetting
 import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 
-class WatermarkModule : HudModule(
-  id = "watermark",
-  name = "Watermark",
-  description = "Displays Cobalt branding",
-) {
-
-  override val defaultAnchor = HudAnchor.TOP_LEFT
-  override val defaultOffsetX = 10f
-  override val defaultOffsetY = 10f
-  override val defaultScale = 1.0f
+class WatermarkModule : Module("Watermark") {
 
   private val textSize = 18f
 
-  private var text by TextSetting("Text", "Display text", "Cobalt")
-  private var color by ColorSetting("Color", "Text color", ThemeManager.currentTheme.accent)
-  private var shadow by CheckboxSetting("Shadow", "Show text shadow", false)
-  private var background by CheckboxSetting("Background", "Show background box", false)
+  val watermark = hudElement("watermark", "Watermark", "Displays Cobalt branding") {
+    anchor = HudAnchor.TOP_LEFT
+    offsetX = 10f
+    offsetY = 10f
 
-  init {
-    resetPosition()
-  }
+    val text = setting(TextSetting("Text", "Display text", "Cobalt"))
+    val color = setting(ColorSetting("Color", "Text color", ThemeManager.currentTheme.accent))
+    val shadow = setting(CheckboxSetting("Shadow", "Show text shadow", false))
+    val background = setting(CheckboxSetting("Background", "Show background box", false))
 
-  override fun getBaseWidth(): Float = NVGRenderer.textWidth(text, textSize) + (if (background) 16f else 0f)
+    width { NVGRenderer.textWidth(text.value, textSize) + (if (background.value) 16f else 0f) }
+    height { textSize + (if (background.value) 12f else 4f) }
 
-  override fun getBaseHeight(): Float = textSize + (if (background) 12f else 4f)
+    render { screenX, screenY, _ ->
+      val padX = if (background.value) 8f else 0f
+      val padY = if (background.value) 6f else 0f
 
-  override fun render(screenX: Float, screenY: Float, scale: Float) {
-    if (background) {
-      NVGRenderer.rect(screenX - 8f, screenY - 6f, 
-        getBaseWidth(), getBaseHeight(), 
-        ThemeManager.currentTheme.panel, 6f)
-    }
-    
-    if (shadow) {
-      NVGRenderer.textShadow(text, screenX, screenY, textSize, color)
-    } else {
-      NVGRenderer.text(text, screenX, screenY, textSize, color)
+      if (background.value) {
+        NVGRenderer.rect(
+          screenX, screenY,
+          NVGRenderer.textWidth(text.value, textSize) + 16f,
+          textSize + 12f,
+          ThemeManager.currentTheme.panel, 6f
+        )
+      }
+
+      val textX = screenX + padX
+      val textY = screenY + padY
+      if (shadow.value) {
+        NVGRenderer.textShadow(text.value, textX, textY, textSize, color.value)
+      } else {
+        NVGRenderer.text(text.value, textX, textY, textSize, color.value)
+      }
     }
   }
 }

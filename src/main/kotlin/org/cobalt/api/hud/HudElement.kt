@@ -3,7 +3,7 @@ package org.cobalt.api.hud
 import org.cobalt.api.module.setting.Setting
 import org.cobalt.api.module.setting.SettingsContainer
 
-abstract class HudModule(
+abstract class HudElement(
   val id: String,
   val name: String,
   val description: String = "",
