@@ -22,15 +22,11 @@ internal class UISidebar : UIPanel(
 
   private val moduleButton = UIButton("/assets/cobalt/icons/box.svg") {
     UIConfig.swapBodyPanel(UIAddonList())
-    isHudActive = false
   }
 
   private val hudButton = UIButton("/assets/cobalt/icons/palette.svg") {
     UIHudEditor().openUI()
-    isHudActive = true
   }
-
-  private var isHudActive = false
 
   private val steveIcon = NVGRenderer.createImage("/assets/cobalt/steve.png")
   private val userIcon = try {
@@ -55,12 +51,12 @@ internal class UISidebar : UIPanel(
     NVGRenderer.text("cb", x + width / 2F - 15F, y + 25F, 25F, ThemeManager.currentTheme.text)
 
     moduleButton
-      .setSelected(!isHudActive)
+      .setSelected(true)
       .updateBounds(x + (width / 2F) - (moduleButton.width / 2F), y + 75F)
       .render()
 
     hudButton
-      .setSelected(isHudActive)
+      .setSelected(if (isHoveringOver(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F, hudButton.width, hudButton.height)) true else false)
       .updateBounds(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F)
       .render()
 
