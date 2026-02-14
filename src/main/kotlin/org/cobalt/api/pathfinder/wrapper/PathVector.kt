@@ -6,7 +6,6 @@ import net.minecraft.util.Mth
 data class PathVector(val x: Double, val y: Double, val z: Double) {
 
   fun dot(other: PathVector): Double = x * other.x + y * other.y + z * other.z
-
   fun length(): Double = sqrt(Mth.square(x) + Mth.square(y) + Mth.square(z))
 
   fun distance(other: PathVector): Double =
@@ -17,7 +16,6 @@ data class PathVector(val x: Double, val y: Double, val z: Double) {
   fun setZ(z: Double): PathVector = copy(z = z)
 
   fun subtract(other: PathVector): PathVector = PathVector(x - other.x, y - other.y, z - other.z)
-
   fun multiply(value: Double): PathVector = PathVector(x * value, y * value, z * value)
 
   fun normalize(): PathVector {
@@ -26,7 +24,6 @@ data class PathVector(val x: Double, val y: Double, val z: Double) {
   }
 
   fun divide(value: Double): PathVector = PathVector(x / value, y / value, z / value)
-
   fun add(other: PathVector): PathVector = PathVector(x + other.x, y + other.y, z + other.z)
 
 }

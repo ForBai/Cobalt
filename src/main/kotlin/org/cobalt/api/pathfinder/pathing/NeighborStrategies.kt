@@ -3,6 +3,7 @@ package org.cobalt.api.pathfinder.pathing
 import org.cobalt.api.pathfinder.wrapper.PathVector
 
 object NeighborStrategies {
+
   private val VERTICAL_AND_HORIZONTAL_OFFSETS =
     listOf(
       PathVector(1.0, 0.0, 0.0),
@@ -39,10 +40,10 @@ object NeighborStrategies {
     )
 
   val VERTICAL_AND_HORIZONTAL = INeighborStrategy { VERTICAL_AND_HORIZONTAL_OFFSETS }
-
   val DIAGONAL_3D = INeighborStrategy { DIAGONAL_3D_OFFSETS }
 
   val HORIZONTAL_DIAGONAL_AND_VERTICAL = INeighborStrategy {
     HORIZONTAL_DIAGONAL_AND_VERTICAL_OFFSETS
   }
+
 }

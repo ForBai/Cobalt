@@ -118,4 +118,5 @@ class MinecraftPathProcessor : NodeProcessor {
 
     return Cost.of(additionalCost)
   }
+
 }

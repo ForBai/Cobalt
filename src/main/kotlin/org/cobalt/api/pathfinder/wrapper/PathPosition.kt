@@ -24,7 +24,6 @@ data class PathPosition(val x: Double, val y: Double, val z: Double) {
   }
 
   fun distance(other: PathPosition): Double = sqrt(distanceSquared(other))
-
   fun setX(x: Double): PathPosition = copy(x = x)
   fun setY(y: Double): PathPosition = copy(y = y)
   fun setZ(z: Double): PathPosition = copy(z = z)
@@ -32,19 +31,23 @@ data class PathPosition(val x: Double, val y: Double, val z: Double) {
   fun add(x: Double, y: Double, z: Double): PathPosition =
     PathPosition(this.x + x, this.y + y, this.z + z)
 
-  fun add(vector: PathVector): PathPosition = add(vector.x, vector.y, vector.z)
+  fun add(vector: PathVector): PathPosition =
+    add(vector.x, vector.y, vector.z)
 
   fun subtract(x: Double, y: Double, z: Double): PathPosition =
     PathPosition(this.x - x, this.y - y, this.z - z)
 
-  fun subtract(vector: PathVector): PathPosition = subtract(vector.x, vector.y, vector.z)
+  fun subtract(vector: PathVector): PathPosition =
+    subtract(vector.x, vector.y, vector.z)
 
-  fun toVector(): PathVector = PathVector(x, y, z)
+  fun toVector(): PathVector =
+    PathVector(x, y, z)
 
   fun floor(): PathPosition =
     PathPosition(flooredX.toDouble(), flooredY.toDouble(), flooredZ.toDouble())
 
-  fun mid(): PathPosition = PathPosition(flooredX + 0.5, flooredY + 0.5, flooredZ + 0.5)
+  fun mid(): PathPosition =
+    PathPosition(flooredX + 0.5, flooredY + 0.5, flooredZ + 0.5)
 
   fun midPoint(end: PathPosition): PathPosition =
     PathPosition((x + end.x) / 2, (y + end.y) / 2, (z + end.z) / 2)

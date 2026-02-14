@@ -137,4 +137,5 @@ class PrimitiveMinHeap(initialCapacity: Int) {
     costs[current] = costToMove
     nodeToIndexMap.put(nodeToMove, current)
   }
+
 }

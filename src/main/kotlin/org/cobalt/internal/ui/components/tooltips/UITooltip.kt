@@ -1,7 +1,7 @@
 package org.cobalt.internal.ui.components.tooltips
 
-import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.api.ui.theme.ThemeManager
+import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.ui.UIComponent
 import org.cobalt.internal.ui.animation.ColorAnimation
 import org.cobalt.internal.ui.util.isHoveringOver

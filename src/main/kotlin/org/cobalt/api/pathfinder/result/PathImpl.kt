@@ -10,12 +10,9 @@ class PathImpl(
 ) : Path {
 
   override fun getStart(): PathPosition = start
-
   override fun getEnd(): PathPosition = end
-
   override fun iterator(): Iterator<PathPosition> = positions.iterator()
-
   override fun length(): Int = positions.size
-
   override fun collect(): Collection<PathPosition> = positions.toList()
+
 }

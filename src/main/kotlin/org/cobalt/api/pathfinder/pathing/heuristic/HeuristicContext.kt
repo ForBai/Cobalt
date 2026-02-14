@@ -7,6 +7,7 @@ class HeuristicContext(
   val pathfindingProgress: PathfindingProgress,
   val heuristicWeights: HeuristicWeights,
 ) {
+
   constructor(
     position: PathPosition,
     startPosition: PathPosition,
@@ -22,4 +23,5 @@ class HeuristicContext(
 
   val targetPosition: PathPosition
     get() = pathfindingProgress.target
+
 }

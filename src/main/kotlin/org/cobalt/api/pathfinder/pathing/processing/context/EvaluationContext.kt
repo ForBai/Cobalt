@@ -6,6 +6,7 @@ import org.cobalt.api.pathfinder.provider.NavigationPointProvider
 import org.cobalt.api.pathfinder.wrapper.PathPosition
 
 interface EvaluationContext {
+
   val currentPathPosition: PathPosition
   val previousPathPosition: PathPosition?
   val currentNodeDepth: Int
@@ -32,4 +33,5 @@ interface EvaluationContext {
 
   val environmentContext: EnvironmentContext?
     get() = searchContext.environmentContext
+
 }

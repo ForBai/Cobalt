@@ -1,22 +1,17 @@
 package org.cobalt.api.event
 
-import java.io.File
-import java.io.IOException
 import java.lang.invoke.LambdaMetafactory
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 import java.lang.reflect.Method
-import java.net.URLDecoder
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
-import java.util.zip.ZipFile
 import org.cobalt.api.event.annotation.SubscribeEvent
 
 object EventBus {
 
   private val listeners = ConcurrentHashMap<Class<*>, List<ListenerData>>()
-
   private val registered = ConcurrentHashMap.newKeySet<Any>()
   private val dynamicRunnable = ConcurrentHashMap<Class<out Event>, MutableList<(Event) -> Unit>>()
 
