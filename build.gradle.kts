@@ -1,14 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  kotlin("jvm")
-  id("fabric-loom")
+  alias(libs.plugins.kotlin)
+  alias(libs.plugins.loom)
   `maven-publish`
-  java
 }
 
 val baseGroup: String by project
-val lwjglVersion: String by project
 val modVersion: String by project
 val modName: String by project
 
@@ -19,10 +17,6 @@ base {
   archivesName = modName
 }
 
-val docVersionsDir = projectDir.resolve("docs-versions")
-val currentVersion = version.toString()
-val currentVersionDir = docVersionsDir.resolve(currentVersion)
-
 repositories {
   mavenCentral()
   maven("https://maven.meteordev.org/releases")
@@ -30,29 +24,21 @@ repositories {
 }
 
 dependencies {
-  minecraft("com.mojang:minecraft:${property("minecraft_version")}")
+  minecraft(libs.minecraft)
   mappings(loom.officialMojangMappings())
+  modImplementation(libs.bundles.fabric)
 
-  modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
-  modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
-  modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
-
-  modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.2")
-  runtimeOnly("org.apache.httpcomponents:httpclient:4.5.14")
-
-  modImplementation("org.lwjgl:lwjgl-nanovg:${lwjglVersion}")
-  include("org.lwjgl:lwjgl-nanovg:${lwjglVersion}")
+  implementation(libs.nanovg) { include(this) }
+  implementation(libs.bundles.included) { include(this) }
 
   listOf("windows", "linux", "macos", "macos-arm64").forEach {
-    modImplementation("org.lwjgl:lwjgl-nanovg:${lwjglVersion}:natives-$it")
-    include("org.lwjgl:lwjgl-nanovg:${lwjglVersion}:natives-$it")
+    implementation(variantOf(libs.nanovg) { classifier("natives-$it") }) {
+      include(this)
+    }
   }
 
-  implementation("meteordevelopment:discord-ipc:1.1")
-  include("meteordevelopment:discord-ipc:1.1")
-
-  implementation("org.reflections:reflections:0.10.2")
-  include("org.reflections:reflections:0.10.2")
+  runtimeOnly(libs.httpclient)
+  modRuntimeOnly(libs.devauth)
 }
 
 tasks {
@@ -86,7 +72,6 @@ tasks {
 }
 
 java {
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(21))
-  }
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
 }
