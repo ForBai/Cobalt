@@ -209,7 +209,7 @@ internal class UIModeSetting(private val setting: ModeSetting) : UIComponent(
   }
 
   companion object {
-    private val caretIcon = NVGRenderer.createImage("/assets/cobalt/icons/caret-down.svg")
+    private val caretIcon = NVGRenderer.createImage("/assets/cobalt/textures/ui/caret-down.svg")
   }
 
 }

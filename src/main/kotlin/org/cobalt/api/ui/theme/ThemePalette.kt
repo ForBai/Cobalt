@@ -104,4 +104,5 @@ data class ThemePalette(
     theme.black = Color.BLACK.rgb
     theme.transparent = Color(0, 0, 0, 0).rgb
   }
+
 }

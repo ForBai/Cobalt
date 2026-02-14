@@ -202,6 +202,7 @@ object EventBus {
     }
   }
 
+  @Suppress("UNCHECKED_CAST")
   @JvmStatic
   fun <T : Event> registerEvent(eventClass: Class<T>, listener: (T) -> Unit) {
     dynamicRunnable.computeIfAbsent(eventClass) { mutableListOf() }.add { event -> listener(event as T) }

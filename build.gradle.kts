@@ -14,7 +14,7 @@ version = modVersion
 group = baseGroup
 
 base {
-  archivesName = modName
+  archivesName.set(modName)
 }
 
 repositories {
@@ -43,24 +43,22 @@ dependencies {
 
 tasks {
   processResources {
+    val fabricKotlinVersion = libs.versions.fabric.kotlin.get()
+    val fabricLoaderVersion = libs.versions.fabric.loader.get()
+    val minecraftVersion = libs.versions.minecraft.version.get()
+
     inputs.property("version", project.version)
+    inputs.property("fabricKotlinVersion", fabricKotlinVersion)
+    inputs.property("fabricLoaderVersion", fabricLoaderVersion)
+    inputs.property("minecraftVersion", minecraftVersion)
+
     filesMatching("fabric.mod.json") {
-      expand(getProperties())
-      expand(mutableMapOf("version" to project.version))
-    }
-  }
-
-  publishing {
-    publications {
-      create<MavenPublication>("mavenJava") {
-        artifact(remapJar) {
-          builtBy(remapJar)
-        }
-
-        artifact(kotlinSourcesJar) {
-          builtBy(remapSourcesJar)
-        }
-      }
+      expand(
+        "version" to project.version,
+        "fabricKotlinVersion" to fabricKotlinVersion,
+        "fabricLoaderVersion" to fabricLoaderVersion,
+        "minecraftVersion" to minecraftVersion,
+      )
     }
   }
 
@@ -72,6 +70,7 @@ tasks {
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_21
-  targetCompatibility = JavaVersion.VERSION_21
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(21))
+  }
 }

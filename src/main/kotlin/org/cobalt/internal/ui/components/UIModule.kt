@@ -67,7 +67,7 @@ internal class UIModule(
   }
 
   companion object {
-    private val selectedIcon = NVGRenderer.createImage("/assets/cobalt/icons/selected.svg")
+    private val selectedIcon = NVGRenderer.createImage("/assets/cobalt/textures/ui/selected.svg")
   }
 
 }

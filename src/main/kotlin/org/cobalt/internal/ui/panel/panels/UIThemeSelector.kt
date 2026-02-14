@@ -156,7 +156,7 @@ internal class UIThemeSelector : UIPanel(
     }
 
     companion object {
-      private val plusIcon = NVGRenderer.createImage("/assets/cobalt/icons/plus.svg")
+      private val plusIcon = NVGRenderer.createImage("/assets/cobalt/textures/ui/plus.svg")
     }
   }
 
@@ -244,7 +244,7 @@ internal class UIThemeSelector : UIPanel(
     }
 
     companion object {
-      private val importIcon = NVGRenderer.createImage("/assets/cobalt/icons/import.svg")
+      private val importIcon = NVGRenderer.createImage("/assets/cobalt/textures/ui/import.svg")
     }
   }
 
