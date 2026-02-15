@@ -2,7 +2,7 @@ package org.cobalt.api.util.render
 
 import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.world.phys.AABB
-import org.cobalt.mixin.render.Frustum_FrustumInvoker
+import org.cobalt.mixin.render.FrustumInvoker
 import org.joml.FrustumIntersection
 
 object FrustumUtils {
@@ -22,7 +22,7 @@ object FrustumUtils {
     maxY: Double,
     maxZ: Double,
   ): Boolean {
-    val result = (frustum as Frustum_FrustumInvoker).invokeCubeInFrustum(minX, minY, minZ, maxX, maxY, maxZ)
+    val result = (frustum as FrustumInvoker).invokeCubeInFrustum(minX, minY, minZ, maxX, maxY, maxZ)
     return result == FrustumIntersection.INSIDE || result == FrustumIntersection.INTERSECT
   }
 

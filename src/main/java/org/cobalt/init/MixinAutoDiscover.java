@@ -13,12 +13,16 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.objectweb.asm.tree.ClassNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 public class MixinAutoDiscover implements IMixinConfigPlugin {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(MixinAutoDiscover.class);
   private final List<String> mixins = new ArrayList<>();
+  private static final String CLASS = ".class";
 
   @Override
   public void onLoad(String mixinPackage) {
@@ -40,9 +44,10 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
           mixins.set(i, cls);
         }
       }
-    } catch (IOException | URISyntaxException e) {
-      System.err.println("Failed to auto-discover mixins: " + e.getMessage());
-      e.printStackTrace();
+    } catch (IOException e) {
+      throw new MixinDiscoveryException("Failed to read mixin files", e);
+    } catch (URISyntaxException e) {
+      throw new MixinDiscoveryException("Invalid URI for mixin location", e);
     }
   }
 
@@ -51,20 +56,20 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
     Path mixinDir = root.resolve(mixinPath);
 
     if (!Files.exists(mixinDir)) {
-      System.out.println("Mixin directory does not exist: " + mixinDir);
+      LOGGER.warn("Mixin directory does not exist: {}", mixinDir);
       return;
     }
 
     try (Stream<Path> paths = Files.walk(mixinDir)) {
       paths.filter(Files::isRegularFile)
-        .filter(p -> p.toString().endsWith(".class"))
+        .filter(p -> p.toString().endsWith(CLASS))
         .filter(p -> !p.toString().endsWith("package-info.class"))
         .forEach(p -> {
           String relativePath = root.relativize(p).toString();
           String className = relativePath
             .replace("/", ".")
             .replace("\\", ".")
-            .replace(".class", "");
+            .replace(CLASS, "");
 
           if (!className.isEmpty()) {
             mixins.add(className);
@@ -74,7 +79,7 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
   }
 
   private void scanJar(Path jarPath, String mixinPackage) throws IOException {
-    String mixinPath = mixinPackage.replace(".", "/") + "/";
+    String mixinPath = mixinPackage.replace(".", "/");
 
     try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(jarPath))) {
       ZipEntry entry;
@@ -84,12 +89,12 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
 
         if (
           entryName.startsWith(mixinPath) &&
-            entryName.endsWith(".class") &&
+            entryName.endsWith(CLASS) &&
             !entryName.endsWith("package-info.class")
         ) {
           String className = entryName
             .replace("/", ".")
-            .replace(".class", "");
+            .replace(CLASS, "");
 
           if (!className.isEmpty()) {
             mixins.add(className);
@@ -118,14 +123,23 @@ public class MixinAutoDiscover implements IMixinConfigPlugin {
 
   @Override
   public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
+    // We don't need to process target classes for this plugin.
   }
 
   @Override
   public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+    // No preprocessing needed for this plugin.
   }
 
   @Override
   public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+    // No postprocessing needed for this plugin.
+  }
+
+  private static class MixinDiscoveryException extends RuntimeException {
+    public MixinDiscoveryException(String message, Throwable cause) {
+      super(message, cause);
+    }
   }
 
 }

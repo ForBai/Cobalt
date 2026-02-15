@@ -16,6 +16,7 @@ import org.cobalt.internal.loader.AddonLoader
 @Suppress("UNUSED")
 object Cobalt : ClientModInitializer {
 
+
   override fun onInitializeClient() {
     ModuleManager.addModules(listOf(WatermarkModule()))
 

@@ -11,4 +11,5 @@ data class Cost private constructor(val value: Double) {
       return Cost(value)
     }
   }
+
 }

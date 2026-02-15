@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Minecraft.class)
-public interface MouseClickAccessor_MinecraftMixin {
+public interface MinecraftAccessor {
 
   @Invoker("startAttack")
   boolean leftClick();

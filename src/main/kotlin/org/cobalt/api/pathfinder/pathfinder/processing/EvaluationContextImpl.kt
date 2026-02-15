@@ -48,4 +48,5 @@ class EvaluationContextImpl(
 
   override val grandparentPathPosition: PathPosition?
     get() = parentEngineNode?.parent?.position
+
 }

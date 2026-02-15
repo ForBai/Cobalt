@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LevelRenderer.class)
-public class WorldContext_LevelRendererMixin {
+public class LevelRendererMixin {
 
   @Unique
   private final WorldRenderContext ctx = new WorldRenderContext();
@@ -35,7 +35,7 @@ public class WorldContext_LevelRendererMixin {
   private RenderBuffers renderBuffers;
 
   @Inject(method = "renderLevel", at = @At("HEAD"))
-  private void render(GraphicsResourceAllocator allocator, DeltaTracker tickCounter, boolean renderBlockOutline, Camera camera, Matrix4f positionMatrix, Matrix4f matrix4f, Matrix4f projectionMatrix, GpuBufferSlice fogBuffer, Vector4f fogColor, boolean renderSky, CallbackInfo ci) {
+  private void render(GraphicsResourceAllocator allocator, DeltaTracker tickCounter, boolean renderBlockOutline, Camera camera, Matrix4f positionMatrix, Matrix4f matrix4f, Matrix4f projectionMatrix, GpuBufferSlice fogBuffer, Vector4f fogColor, boolean renderSky, CallbackInfo callbackInfo) {
     ctx.setConsumers(renderBuffers.bufferSource());
     ctx.setCamera(camera);
     new WorldRenderEvent.Start(ctx).post();
@@ -49,7 +49,7 @@ public class WorldContext_LevelRendererMixin {
   }
 
   @Inject(method = "method_62214", at = @At("RETURN"))
-  private void postRender(GpuBufferSlice gpuBufferSlice, LevelRenderState levelRenderState, ProfilerFiller profilerFiller, Matrix4f matrix4f, ResourceHandle resourceHandle, ResourceHandle resourceHandle2, boolean bl, ResourceHandle resourceHandle3, ResourceHandle resourceHandle4, CallbackInfo ci) {
+  private void postRender(GpuBufferSlice gpuBufferSlice, LevelRenderState levelRenderState, ProfilerFiller profilerFiller, Matrix4f matrix4f, ResourceHandle resourceHandle, ResourceHandle resourceHandle2, boolean bl, ResourceHandle resourceHandle3, ResourceHandle resourceHandle4, CallbackInfo callbackInfo) {
     new WorldRenderEvent.Last(ctx).post();
   }
 

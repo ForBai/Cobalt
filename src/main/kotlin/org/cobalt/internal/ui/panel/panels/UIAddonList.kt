@@ -1,6 +1,5 @@
 package org.cobalt.internal.ui.panel.panels
 
-import java.awt.Color
 import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
 import org.cobalt.internal.loader.AddonLoader

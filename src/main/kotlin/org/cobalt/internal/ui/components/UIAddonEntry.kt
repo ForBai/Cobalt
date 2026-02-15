@@ -67,7 +67,7 @@ internal class UIAddonEntry(
   }
 
   companion object {
-    private val boxIcon = NVGRenderer.createImage("/assets/cobalt/icons/box.svg")
+    private val boxIcon = NVGRenderer.createImage("/assets/cobalt/textures/ui/box.svg")
   }
 
 }

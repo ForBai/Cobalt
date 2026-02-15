@@ -22,8 +22,7 @@ class PathfinderResultImpl(
   }
 
   override fun hasFallenBack(): Boolean = pathState == PathState.FALLBACK
-
   override fun getPathState(): PathState = pathState
-
   override fun getPath(): Path = path
+
 }

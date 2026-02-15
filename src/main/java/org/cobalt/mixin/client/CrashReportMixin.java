@@ -8,14 +8,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * Superb mixin by oblongboot!
- */
 @Mixin(CrashReport.class)
-public abstract class AddonList_CrashReportMixin {
+public abstract class CrashReportMixin {
 
   @Inject(method = "getDetails(Ljava/lang/StringBuilder;)V", at = @At("HEAD"))
-  private void addAddonInfo(StringBuilder crashReportBuilder, CallbackInfo ci) {
+  private void addAddonInfo(StringBuilder crashReportBuilder, CallbackInfo callbackInfo) {
     String addons = AddonLoader.INSTANCE.getAddons().stream()
       .map(info -> info.getFirst().getName() + " v" + info.getFirst().getVersion())
       .collect(Collectors.joining(", "));
@@ -24,12 +21,10 @@ public abstract class AddonList_CrashReportMixin {
       addons = "None";
     }
 
-    int count = AddonLoader.INSTANCE.getAddons().size();
-
     crashReportBuilder
       .append("\n========================================")
       .append("\nCobalt Addons (")
-      .append(count)
+      .append(AddonLoader.INSTANCE.getAddons().size())
       .append("): ")
       .append(addons)
       .append("\n========================================\n");

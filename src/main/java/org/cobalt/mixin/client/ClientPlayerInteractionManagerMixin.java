@@ -11,18 +11,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Level.class)
-abstract class BlockBreak_ClientPlayerInteractionManagerMixin {
+abstract class ClientPlayerInteractionManagerMixin {
 
   @Inject(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At("HEAD"))
-  private void onBlockChange(BlockPos pos, BlockState newState, int flags, int maxUpdateDepth, CallbackInfoReturnable<Boolean> cir) {
+  private void onBlockChange(BlockPos blockPos, BlockState newBlockState, int flags, int maxUpdateDepth, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
     if (Minecraft.getInstance().level != (Object) this) {
       return;
     }
 
-    BlockState oldBlock = ((Level) (Object) this).getBlockState(pos);
+    BlockState oldBlockState = ((Level) (Object) this).getBlockState(blockPos);
 
-    if (oldBlock.getBlock() != newState.getBlock()) {
-      new BlockChangeEvent(pos.immutable(), oldBlock, newState).post();
+    if (oldBlockState.getBlock() != newBlockState.getBlock()) {
+      new BlockChangeEvent(blockPos.immutable(), oldBlockState, newBlockState).post();
     }
   }
 

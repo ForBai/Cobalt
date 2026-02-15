@@ -2,7 +2,7 @@ package org.cobalt.internal.ui.theme
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import java.util.Base64
+import java.util.*
 import org.cobalt.api.ui.theme.impl.CustomTheme
 
 internal object ThemeSerializer {

@@ -43,10 +43,10 @@ internal class UIInfoSetting(private val setting: InfoSetting) : UIComponent(
 
   private fun getIcon(): String {
     return when (setting.type) {
-      InfoType.INFO -> "/assets/cobalt/icons/settings/info.svg"
-      InfoType.WARNING -> "/assets/cobalt/icons/settings/warning.svg"
-      InfoType.SUCCESS -> "/assets/cobalt/icons/settings/checkmark.svg"
-      InfoType.ERROR -> "/assets/cobalt/icons/settings/error.svg"
+      InfoType.INFO -> "/assets/cobalt/textures/ui/info.svg"
+      InfoType.WARNING -> "/assets/cobalt/textures/ui/warning.svg"
+      InfoType.SUCCESS -> "/assets/cobalt/textures/ui/checkmark.svg"
+      InfoType.ERROR -> "/assets/cobalt/textures/ui/error.svg"
     }
   }
 
@@ -64,6 +64,7 @@ internal class UIInfoSetting(private val setting: InfoSetting) : UIComponent(
       val icon = NVGRenderer.createImage(getIcon())
       NVGRenderer.image(icon, iconX, iconY, iconSize, iconSize, colorMask = iconColor)
     } catch (_: Exception) {
+      // If icon fails to load, just skip it
     }
 
     if (setting.name.isNotEmpty()) {

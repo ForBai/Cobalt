@@ -174,4 +174,5 @@ class AStarPathfinder(configuration: PathfinderConfiguration) : AbstractPathfind
     val openSetNodes: Long2ObjectMap<Node> = Long2ObjectOpenHashMap()
     val closedSet: LongSet = LongOpenHashSet()
   }
+
 }

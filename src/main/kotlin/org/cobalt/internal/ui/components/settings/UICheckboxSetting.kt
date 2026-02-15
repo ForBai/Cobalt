@@ -84,7 +84,7 @@ internal class UICheckboxSetting(private val setting: CheckboxSetting) : UICompo
   }
 
   companion object {
-    val checkmarkIcon = NVGRenderer.createImage("/assets/cobalt/icons/settings/checkmark.svg")
+    val checkmarkIcon = NVGRenderer.createImage("/assets/cobalt/textures/ui/checkmark.svg")
   }
 
 }

@@ -22,6 +22,7 @@ data class PathfinderConfiguration(
   val neighborStrategy: INeighborStrategy = NeighborStrategies.VERTICAL_AND_HORIZONTAL,
   val heuristicStrategy: IHeuristicStrategy = LinearHeuristicStrategy(),
 ) {
+
   companion object {
     val DEFAULT: PathfinderConfiguration = PathfinderConfiguration()
 
@@ -29,9 +30,11 @@ data class PathfinderConfiguration(
       return pathfinderConfiguration.copy(processors = pathfinderConfiguration.processors.toList())
     }
   }
+
 }
 
 private object DefaultNavigationPointProvider : NavigationPointProvider {
+
   override fun getNavigationPoint(
     position: PathPosition,
     environmentContext: EnvironmentContext?,
@@ -44,4 +47,5 @@ private object DefaultNavigationPointProvider : NavigationPointProvider {
       override fun isLiquid(): Boolean = false
     }
   }
+
 }

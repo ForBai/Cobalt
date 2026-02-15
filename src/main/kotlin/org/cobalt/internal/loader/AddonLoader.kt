@@ -85,12 +85,7 @@ object AddonLoader {
 
       for (entrypoint in metadata.entrypoints) {
         val classPath = entrypoint.replace('.', '/') + ".class"
-
-        if (zip.getEntry(classPath) == null) {
-          throw IllegalStateException(
-            "Entrypoint class '$entrypoint' does not exist inside ${jarPath.fileName}"
-          )
-        }
+        checkNotNull(zip.getEntry(classPath)) { "Entrypoint class '$entrypoint' does not exist inside ${jarPath.fileName}" }
 
         val instance = Class.forName(entrypoint).let {
           try {
@@ -102,12 +97,7 @@ object AddonLoader {
           }
         }
 
-        if (instance !is Addon) {
-          throw IllegalStateException(
-            "Entrypoint '$entrypoint' must implement Addon"
-          )
-        }
-
+        check(instance is Addon) { "Entrypoint '$entrypoint' must implement Addon" }
         addons += metadata to instance
       }
 

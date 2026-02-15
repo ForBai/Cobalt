@@ -66,7 +66,7 @@ internal class UIBackButton(
   }
 
   companion object {
-    private val leftArrow = NVGRenderer.createImage("/assets/cobalt/icons/arrow-left.svg")
+    private val leftArrow = NVGRenderer.createImage("/assets/cobalt/textures/ui/arrow-left.svg")
   }
 
 }

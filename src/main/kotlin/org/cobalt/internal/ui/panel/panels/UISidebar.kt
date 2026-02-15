@@ -1,6 +1,5 @@
 package org.cobalt.internal.ui.panel.panels
 
-import java.awt.Color
 import net.minecraft.client.Minecraft
 import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.util.ui.NVGRenderer
@@ -20,7 +19,7 @@ internal class UISidebar : UIPanel(
   height = 600F
 ) {
 
-  private val moduleButton = UIButton("/assets/cobalt/icons/box.svg") {
+  private val moduleButton = UIButton("/assets/cobalt/textures/ui/box.svg") {
     UIConfig.swapBodyPanel(UIAddonList())
   }
 
@@ -28,7 +27,7 @@ internal class UISidebar : UIPanel(
     UIHudEditor().openUI()
   }
 
-  private val steveIcon = NVGRenderer.createImage("/assets/cobalt/steve.png")
+  private val steveIcon = NVGRenderer.createImage("/assets/cobalt/textures/steve.png")
   private val userIcon = try {
     NVGRenderer.createImage("https://mc-heads.net/avatar/${Minecraft.getInstance().user.profileId}/100/face.png")
   } catch (_: Exception) {

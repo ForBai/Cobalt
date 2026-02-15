@@ -138,4 +138,5 @@ class MinecraftNavigationProvider : NavigationPointProvider {
       belowPos.y.toDouble() + shape.max(Axis.Y)
     }
   }
+
 }

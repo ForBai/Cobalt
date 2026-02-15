@@ -1,6 +1,5 @@
 package org.cobalt.internal.ui.components
 
-import java.awt.Color
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import org.cobalt.api.ui.theme.ThemeManager

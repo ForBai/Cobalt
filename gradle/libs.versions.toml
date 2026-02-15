@@ -1,0 +1,38 @@
+[versions]
+# Library Versions
+minecraft-version = "1.21.11"
+
+fabric-loader = "0.18.4"
+fabric-api = "0.141.2+1.21.11"
+fabric-kotlin = "1.13.8+kotlin.2.3.0"
+
+lwjgl = "3.3.3"
+discord-ipc = "1.1"
+reflections = "0.10.2"
+httpclient = "4.5.14"
+devauth = "1.2.2"
+
+# Plugins Versions
+kotlin = "2.3.0"
+loom = "1.15-SNAPSHOT"
+
+[libraries]
+minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft-version" }
+
+fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
+fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric-loader" }
+fabric-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-kotlin" }
+
+nanovg = { group = "org.lwjgl", name = "lwjgl-nanovg", version.ref = "lwjgl" }
+discord-ipc = { group = "meteordevelopment", name = "discord-ipc", version.ref = "discord-ipc" }
+reflections = { group = "org.reflections", name = "reflections", version.ref = "reflections" }
+httpclient = { group = "org.apache.httpcomponents", name = "httpclient", version.ref = "httpclient" }
+devauth = { group = "me.djtheredstoner", name = "DevAuth-fabric", version.ref = "devauth" }
+
+[bundles]
+fabric = ["fabric-api", "fabric-loader", "fabric-kotlin"]
+included = ["discord-ipc", "reflections"]
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+loom = { id = "fabric-loom", version.ref = "loom" }

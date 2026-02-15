@@ -179,12 +179,12 @@ internal class UIThemeEditor(
     val visibleHeight = height - (topBar.height + backButton.height + 20F)
 
     val list = listOf<UIComponent>(nameEditor) +
-               listOf(UIInfoSetting(InfoSetting("Palette", ""))) +
-               paletteEditors +
-               listOf(generateButton) +
-               listOf(copyButton) +
-               listOf(deleteButton) +
-               colorEditors
+      listOf(UIInfoSetting(InfoSetting("Palette", ""))) +
+      paletteEditors +
+      listOf(generateButton) +
+      listOf(copyButton) +
+      listOf(deleteButton) +
+      colorEditors
 
     scrollHandler.setMaxScroll(layout.contentHeight(list.size) + 20F, visibleHeight)
     NVGRenderer.pushScissor(x, startY, width, visibleHeight)
@@ -208,10 +208,6 @@ internal class UIThemeEditor(
     }
 
     return false
-  }
-
-  override fun mouseClicked(button: Int): Boolean {
-    return super.mouseClicked(button)
   }
 
   private fun applyPalette() {

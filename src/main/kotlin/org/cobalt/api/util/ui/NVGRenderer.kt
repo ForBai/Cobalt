@@ -9,11 +9,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import net.minecraft.client.Minecraft
-import org.cobalt.api.util.ui.NVGRenderer.image
-import org.cobalt.api.util.ui.NVGRenderer.pop
-import org.cobalt.api.util.ui.NVGRenderer.popScissor
-import org.cobalt.api.util.ui.NVGRenderer.push
-import org.cobalt.api.util.ui.NVGRenderer.text
 import org.cobalt.api.util.ui.helper.Font
 import org.cobalt.api.util.ui.helper.Gradient
 import org.cobalt.api.util.ui.helper.Image
@@ -61,7 +56,7 @@ object NVGRenderer {
   }
 
   fun beginFrame(width: Float, height: Float) {
-    if (drawing) throw IllegalStateException("[NVGRenderer] Already drawing, but called beginFrame")
+    check(!drawing) { "[NVGRenderer] Already drawing, but called beginFrame" }
 
     val framebuffer = mc.mainRenderTarget
     val glFramebuffer = (framebuffer.colorTexture as GlTexture).getFbo(
@@ -80,7 +75,8 @@ object NVGRenderer {
   }
 
   fun endFrame() {
-    if (!drawing) throw IllegalStateException("[NVGRenderer] Not drawing, but called endFrame")
+    check(drawing) { "[NVGRenderer] Not drawing, but called endFrame" }
+
     nvgEndFrame(vg)
     GlStateManager._disableCull()
     GlStateManager._disableDepthTest()

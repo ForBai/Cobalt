@@ -14,15 +14,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * @author StellariumMC
  */
 @Mixin(GlStateManager.class)
-public class TextureTracking_GlStateManagerMixin {
+public class GlStateManagerMixin {
 
   @Inject(method = "_bindTexture", at = @At("HEAD"), remap = false)
-  private static void onBindTexture(int texture, CallbackInfo ci) {
+  private static void onBindTexture(int texture, CallbackInfo callbackInfo) {
     TextureTracker.setPrevBoundTexture(texture);
   }
 
   @Inject(method = "_activeTexture", at = @At("HEAD"), remap = false)
-  private static void onActiveTexture(int texture, CallbackInfo ci) {
+  private static void onActiveTexture(int texture, CallbackInfo callbackInfo) {
     TextureTracker.setPrevActiveTexture(texture);
   }
 

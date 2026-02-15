@@ -1,7 +1,7 @@
 package org.cobalt.api.util
 
 import net.minecraft.client.Minecraft
-import org.cobalt.mixin.client.MouseClickAccessor_MinecraftMixin
+import org.cobalt.mixin.client.MinecraftAccessor
 
 object MouseUtils {
 
@@ -27,12 +27,12 @@ object MouseUtils {
 
   @JvmStatic
   fun leftClick() {
-    (mc as MouseClickAccessor_MinecraftMixin).leftClick()
+    (mc as MinecraftAccessor).leftClick()
   }
 
   @JvmStatic
   fun rightClick() {
-    (mc as MouseClickAccessor_MinecraftMixin).rightClick()
+    (mc as MinecraftAccessor).rightClick()
   }
 
 }

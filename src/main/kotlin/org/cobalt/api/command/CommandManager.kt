@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.minecraft.commands.CommandBuildContext
 import org.cobalt.api.command.annotation.DefaultHandler
 import org.cobalt.api.command.annotation.SubCommand
 
@@ -30,10 +29,12 @@ object CommandManager {
   }
 
   internal fun dispatchAll() {
-    ClientCommandRegistrationCallback.EVENT.register(CommandManager::dispatchAll)
+    ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
+      dispatchAll(dispatcher)
+    }
   }
 
-  private fun dispatchAll(dispatcher: CommandDispatcher<FabricClientCommandSource>, access: CommandBuildContext) {
+  private fun dispatchAll(dispatcher: CommandDispatcher<FabricClientCommandSource>) {
     commands.forEach { command ->
       val rootNames = listOf(command.name) + command.aliases
 

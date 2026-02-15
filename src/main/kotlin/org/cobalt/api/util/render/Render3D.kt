@@ -1,8 +1,8 @@
 package org.cobalt.api.util.render
 
 import java.awt.Color
-import net.minecraft.gizmos.Gizmos
 import net.minecraft.gizmos.GizmoStyle
+import net.minecraft.gizmos.Gizmos
 import net.minecraft.util.ARGB
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3

@@ -2,9 +2,6 @@ package org.cobalt.api.rotation
 
 import kotlin.math.*
 
-/**
- * Thank you oblongboot for this superb enum!
- */
 enum class EasingType(val ease: (Float) -> Float) {
 
   LINEAR({ it }),

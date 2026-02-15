@@ -278,15 +278,10 @@ abstract class AbstractPathfinder(
   }
 
   protected abstract fun insertStartNode(node: Node, fCost: Double, openSet: PrimitiveMinHeap)
-
   protected abstract fun extractBestNode(openSet: PrimitiveMinHeap): Node
-
   protected abstract fun initializeSearch()
-
   protected abstract fun markNodeAsExpanded(node: Node)
-
   protected abstract fun performAlgorithmCleanup()
-
   protected abstract fun processSuccessors(
     requestStart: PathPosition,
     requestTarget: PathPosition,
@@ -294,4 +289,5 @@ abstract class AbstractPathfinder(
     openSet: PrimitiveMinHeap,
     searchContext: SearchContext,
   )
+
 }

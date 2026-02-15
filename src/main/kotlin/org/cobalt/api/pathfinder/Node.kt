@@ -46,4 +46,5 @@ class Node(
 
     return this.depth.compareTo(other.depth)
   }
+
 }

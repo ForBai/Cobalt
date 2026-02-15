@@ -4,6 +4,7 @@ import kotlin.math.sqrt
 import org.cobalt.api.pathfinder.pathing.PathfindingProgress
 
 internal object InternalHeuristicUtils {
+
   private const val EPSILON = 1e-9
 
   fun calculatePerpendicularDistanceSq(progress: PathfindingProgress): Double {
@@ -46,4 +47,5 @@ internal object InternalHeuristicUtils {
 
   fun calculatePerpendicularDistance(progress: PathfindingProgress): Double =
     sqrt(calculatePerpendicularDistanceSq(progress))
+
 }

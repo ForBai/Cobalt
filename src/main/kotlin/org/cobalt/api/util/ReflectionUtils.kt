@@ -12,14 +12,14 @@ object ReflectionUtils {
   fun <T> getField(instance: Any, fieldName: String): T {
     val field = getField(instance::class.java, fieldName)
     field.makeAccessible()
-    return field.get(instance) as T
+    return field[instance] as T
   }
 
   @JvmStatic
   fun setField(instance: Any, fieldName: String, value: Any?) {
     val field = getField(instance::class.java, fieldName)
     field.makeAccessible()
-    field.set(instance, value)
+    field[instance] = value
   }
 
   @JvmStatic
@@ -30,6 +30,7 @@ object ReflectionUtils {
       try {
         return current.getDeclaredField(fieldName)
       } catch (_: NoSuchFieldException) {
+        // Ignore and check superclass
       }
 
       current = current.superclass
@@ -54,6 +55,7 @@ object ReflectionUtils {
       try {
         return current.getDeclaredMethod(methodName, *paramTypes)
       } catch (_: NoSuchMethodException) {
+        // Ignore and check superclass
       }
 
       current = current.superclass
@@ -67,14 +69,14 @@ object ReflectionUtils {
   fun <T> getStaticField(clazz: Class<*>, fieldName: String): T {
     val field = getField(clazz, fieldName)
     field.makeAccessible()
-    return field.get(null) as T
+    return field[null] as T
   }
 
   @JvmStatic
   fun setStaticField(clazz: Class<*>, fieldName: String, value: Any?) {
     val field = getField(clazz, fieldName)
     field.makeAccessible()
-    field.set(null, value)
+    field[null] = value
   }
 
   @JvmStatic

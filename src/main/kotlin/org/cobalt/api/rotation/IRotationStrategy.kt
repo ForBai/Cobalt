@@ -11,7 +11,12 @@ interface IRotationStrategy {
     targetPitch: Float,
   ): Rotation?
 
-  fun onStart() {}
-  fun onStop() {}
+  fun onStart() {
+    // Optional lifecycle hook
+  }
+
+  fun onStop() {
+    // Optional lifecycle hook
+  }
 
 }

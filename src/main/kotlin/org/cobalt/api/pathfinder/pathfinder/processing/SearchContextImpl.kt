@@ -15,4 +15,5 @@ class SearchContextImpl(
 ) : SearchContext {
 
   override val sharedData: MutableMap<String, Any> = HashMap()
+
 }

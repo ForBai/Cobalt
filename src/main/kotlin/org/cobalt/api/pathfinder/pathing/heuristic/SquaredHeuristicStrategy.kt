@@ -5,6 +5,7 @@ import kotlin.math.sqrt
 import org.cobalt.api.pathfinder.wrapper.PathPosition
 
 class SquaredHeuristicStrategy : IHeuristicStrategy {
+
   companion object {
     private const val D1 = 1.0
     private val D2 = sqrt(2.0)
@@ -50,4 +51,5 @@ class SquaredHeuristicStrategy : IHeuristicStrategy {
 
     return dx * dx + dy * dy + dz * dz
   }
+
 }
