@@ -26,7 +26,7 @@ import kotlin.reflect.KProperty
 abstract class Setting<T>(
   val name: String,
   val description: String,
-  var value: T,
+  open var value: T,
 ) : ReadWriteProperty<SettingsContainer, T>, PropertyDelegateProvider<SettingsContainer, ReadWriteProperty<SettingsContainer, T>> {
 
   override operator fun provideDelegate(thisRef: SettingsContainer, property: KProperty<*>): ReadWriteProperty<SettingsContainer, T> {

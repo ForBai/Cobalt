@@ -23,7 +23,7 @@ internal class UISidebar : UIPanel(
     UIConfig.swapBodyPanel(UIAddonList())
   }
 
-  private val hudButton = UIButton("/assets/cobalt/icons/palette.svg") {
+  private val hudButton = UIButton("/assets/cobalt/textures/ui/palette.svg") {
     UIHudEditor().openUI()
   }
 
