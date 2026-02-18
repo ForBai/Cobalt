@@ -16,6 +16,8 @@ class KeyBindSetting(
   defaultValue: KeyBind,
 ) : Setting<KeyBind>(name, description, defaultValue) {
 
+  override val defaultValue: KeyBind = defaultValue
+
   val keyName: String
     get() = when (value.keyCode) {
       -1 -> "None"

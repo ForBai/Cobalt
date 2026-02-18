@@ -7,6 +7,11 @@ class LightTheme : Theme {
 
   override val name = "Light"
 
+  override val rainbowEnabled = false
+  override val rainbowSpeed = 1f
+  override val rainbowSaturation = 1f
+  override val rainbowBrightness = 1f
+
   override val background = Color(240, 240, 240).rgb
   override val panel = Color(255, 255, 255).rgb
   override val inset = Color(232, 232, 232).rgb

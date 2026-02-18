@@ -18,7 +18,7 @@ object Cobalt : ClientModInitializer {
 
 
   override fun onInitializeClient() {
-    ModuleManager.addModules(listOf(WatermarkModule()))
+    ModuleManager.addModules(listOf(WatermarkModule(), WatermarkModule()))
 
     AddonLoader.getAddons().map { it.second }.forEach {
       it.onLoad()

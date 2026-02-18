@@ -11,6 +11,8 @@ class CheckboxSetting(
   defaultValue: Boolean,
 ) : Setting<Boolean>(name, description, defaultValue) {
 
+  override val defaultValue: Boolean = defaultValue
+
   override fun read(element: JsonElement) {
     this.value = element.asBoolean
   }

@@ -10,6 +10,8 @@ internal class InfoSetting(
   val type: InfoType = InfoType.INFO,
 ) : Setting<String>(name ?: "", "Info", "") {
 
+  override val defaultValue: String = ""
+
   override fun read(element: JsonElement) {
     // It exists just to show text in the UI, so there is nothing to read.
   }

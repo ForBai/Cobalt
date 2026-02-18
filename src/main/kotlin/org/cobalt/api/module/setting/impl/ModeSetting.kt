@@ -17,6 +17,8 @@ class ModeSetting(
   val options: Array<String>,
 ) : Setting<Int>(name, description, defaultValue) {
 
+  override val defaultValue: Int = defaultValue
+
   override fun read(element: JsonElement) {
     this.value = element.asInt
   }

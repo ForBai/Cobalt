@@ -11,6 +11,8 @@ class TextSetting(
   defaultValue: String,
 ) : Setting<String>(name, description, defaultValue) {
 
+  override val defaultValue: String = defaultValue
+
   override fun read(element: JsonElement) {
     this.value = element.asString
   }

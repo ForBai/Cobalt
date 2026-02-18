@@ -141,53 +141,72 @@ internal class HudSettingsPopup {
     NVGRenderer.line(cx + half, cy - half, cx - half, cy + half, 1.5f, ThemeManager.currentTheme.textPrimary)
   }
 
-  private fun renderControls(target: HudElement) {
-    val controlsY = panelY + headerHeight + 10f
-    val buttonHeight = 30f
+   private fun renderControls(target: HudElement) {
+     val controlsY = panelY + headerHeight + 10f
+     val buttonHeight = 30f
 
-    val toggleText = if (target.enabled) "Disable" else "Enable"
-    val toggleWidth = NVGRenderer.textWidth(toggleText, 13f) + 30f
-    val toggleX = panelX + padding
+     val toggleText = if (target.enabled) "Disable" else "Enable"
+     val toggleWidth = NVGRenderer.textWidth(toggleText, 13f) + 30f
+     val toggleX = panelX + padding
 
-    val isToggleHover = isHoveringOver(toggleX, controlsY, toggleWidth, buttonHeight)
-    val toggleBg = toggleAnim.get(
-      ThemeManager.currentTheme.controlBg,
-      ThemeManager.currentTheme.selectedOverlay,
-      !isToggleHover
-    )
-    val toggleBorder = toggleAnim.get(
-      ThemeManager.currentTheme.controlBorder,
-      ThemeManager.currentTheme.accent,
-      !isToggleHover
-    )
+     val isToggleHover = isHoveringOver(toggleX, controlsY, toggleWidth, buttonHeight)
+     val toggleBg = toggleAnim.get(
+       ThemeManager.currentTheme.controlBg,
+       ThemeManager.currentTheme.selectedOverlay,
+       !isToggleHover
+     )
+     val toggleBorder = toggleAnim.get(
+       ThemeManager.currentTheme.controlBorder,
+       ThemeManager.currentTheme.accent,
+       !isToggleHover
+     )
 
-    NVGRenderer.rect(toggleX, controlsY, toggleWidth, buttonHeight, toggleBg, 8f)
-    NVGRenderer.hollowRect(toggleX, controlsY, toggleWidth, buttonHeight, 1.5f, toggleBorder, 8f)
-    NVGRenderer.text(toggleText, toggleX + 15f, controlsY + 8f, 13f, ThemeManager.currentTheme.textPrimary)
+     NVGRenderer.rect(toggleX, controlsY, toggleWidth, buttonHeight, toggleBg, 8f)
+     NVGRenderer.hollowRect(toggleX, controlsY, toggleWidth, buttonHeight, 1.5f, toggleBorder, 8f)
+     NVGRenderer.text(toggleText, toggleX + 15f, controlsY + 8f, 13f, ThemeManager.currentTheme.textPrimary)
 
-    val statusText = if (target.enabled) "Enabled" else "Disabled"
-    val statusColor = if (target.enabled) ThemeManager.currentTheme.accent else ThemeManager.currentTheme.textSecondary
-    NVGRenderer.text(statusText, toggleX + toggleWidth + 12f, controlsY + 8f, 12f, statusColor)
+     val statusText = if (target.enabled) "Enabled" else "Disabled"
+     val statusColor = if (target.enabled) ThemeManager.currentTheme.accent else ThemeManager.currentTheme.textSecondary
+     NVGRenderer.text(statusText, toggleX + toggleWidth + 12f, controlsY + 8f, 12f, statusColor)
 
-    val resetText = "Reset Position"
-    val resetWidth = NVGRenderer.textWidth(resetText, 13f) + 30f
-    val resetX = panelX + panelWidth - padding - resetWidth
-    val resetHover = isHoveringOver(resetX, controlsY, resetWidth, buttonHeight)
-    val resetBg = buttonAnim.get(
-      ThemeManager.currentTheme.controlBg,
-      ThemeManager.currentTheme.selectedOverlay,
-      !resetHover
-    )
-    val resetBorder = buttonAnim.get(
-      ThemeManager.currentTheme.controlBorder,
-      ThemeManager.currentTheme.accent,
-      !resetHover
-    )
+     val resetSettingsText = "Reset Settings"
+     val resetSettingsWidth = NVGRenderer.textWidth(resetSettingsText, 13f) + 30f
+     val resetSettingsX = panelX + panelWidth - padding - resetSettingsWidth
+     val resetSettingsHover = isHoveringOver(resetSettingsX, controlsY, resetSettingsWidth, buttonHeight)
+     val resetSettingsBg = buttonAnim.get(
+       ThemeManager.currentTheme.controlBg,
+       ThemeManager.currentTheme.selectedOverlay,
+       !resetSettingsHover
+     )
+     val resetSettingsBorder = buttonAnim.get(
+       ThemeManager.currentTheme.controlBorder,
+       ThemeManager.currentTheme.accent,
+       !resetSettingsHover
+     )
 
-    NVGRenderer.rect(resetX, controlsY, resetWidth, buttonHeight, resetBg, 8f)
-    NVGRenderer.hollowRect(resetX, controlsY, resetWidth, buttonHeight, 1.5f, resetBorder, 8f)
-    NVGRenderer.text(resetText, resetX + 15f, controlsY + 8f, 13f, ThemeManager.currentTheme.textPrimary)
-  }
+     NVGRenderer.rect(resetSettingsX, controlsY, resetSettingsWidth, buttonHeight, resetSettingsBg, 8f)
+     NVGRenderer.hollowRect(resetSettingsX, controlsY, resetSettingsWidth, buttonHeight, 1.5f, resetSettingsBorder, 8f)
+     NVGRenderer.text(resetSettingsText, resetSettingsX + 15f, controlsY + 8f, 13f, ThemeManager.currentTheme.textPrimary)
+
+     val resetText = "Reset Position"
+     val resetWidth = NVGRenderer.textWidth(resetText, 13f) + 30f
+     val resetX = resetSettingsX - resetWidth - 10f
+     val resetHover = isHoveringOver(resetX, controlsY, resetWidth, buttonHeight)
+     val resetBg = buttonAnim.get(
+       ThemeManager.currentTheme.controlBg,
+       ThemeManager.currentTheme.selectedOverlay,
+       !resetHover
+     )
+     val resetBorder = buttonAnim.get(
+       ThemeManager.currentTheme.controlBorder,
+       ThemeManager.currentTheme.accent,
+       !resetHover
+     )
+
+     NVGRenderer.rect(resetX, controlsY, resetWidth, buttonHeight, resetBg, 8f)
+     NVGRenderer.hollowRect(resetX, controlsY, resetWidth, buttonHeight, 1.5f, resetBorder, 8f)
+     NVGRenderer.text(resetText, resetX + 15f, controlsY + 8f, 13f, ThemeManager.currentTheme.textPrimary)
+   }
 
   private fun renderSettings(startY: Float) {
     if (settingComponents.isEmpty()) {
@@ -248,29 +267,41 @@ internal class HudSettingsPopup {
     val controlsY = panelY + headerHeight + 10f
     val buttonHeight = 30f
 
-    val toggleText = if (target.enabled) "Disable" else "Enable"
-    val toggleWidth = NVGRenderer.textWidth(toggleText, 13f) + 30f
-    val toggleX = panelX + padding
+     val toggleText = if (target.enabled) "Disable" else "Enable"
+     val toggleWidth = NVGRenderer.textWidth(toggleText, 13f) + 30f
+     val toggleX = panelX + padding
 
-    if (mouseX >= toggleX && mouseX <= toggleX + toggleWidth &&
-      mouseY >= controlsY && mouseY <= controlsY + buttonHeight
-    ) {
-      target.enabled = !target.enabled
-      toggleAnim.start()
-      return true
-    }
+     if (mouseX >= toggleX && mouseX <= toggleX + toggleWidth &&
+       mouseY >= controlsY && mouseY <= controlsY + buttonHeight
+     ) {
+       target.enabled = !target.enabled
+       toggleAnim.start()
+       return true
+     }
 
-    val resetText = "Reset Position"
-    val resetWidth = NVGRenderer.textWidth(resetText, 13f) + 30f
-    val resetX = panelX + panelWidth - padding - resetWidth
+     val resetSettingsText = "Reset Settings"
+     val resetSettingsWidth = NVGRenderer.textWidth(resetSettingsText, 13f) + 30f
+     val resetSettingsX = panelX + panelWidth - padding - resetSettingsWidth
 
-    if (mouseX >= resetX && mouseX <= resetX + resetWidth &&
-      mouseY >= controlsY && mouseY <= controlsY + buttonHeight
-    ) {
-      target.resetPosition()
-      buttonAnim.start()
-      return true
-    }
+     if (mouseX >= resetSettingsX && mouseX <= resetSettingsX + resetSettingsWidth &&
+       mouseY >= controlsY && mouseY <= controlsY + buttonHeight
+     ) {
+       target.resetSettings()
+       buttonAnim.start()
+       return true
+     }
+
+     val resetText = "Reset Position"
+     val resetWidth = NVGRenderer.textWidth(resetText, 13f) + 30f
+     val resetX = resetSettingsX - resetWidth - 10f
+
+     if (mouseX >= resetX && mouseX <= resetX + resetWidth &&
+       mouseY >= controlsY && mouseY <= controlsY + buttonHeight
+     ) {
+       target.resetPosition()
+       buttonAnim.start()
+       return true
+     }
 
     for (component in settingComponents) {
       if (component.mouseClicked(button)) return true

@@ -81,6 +81,15 @@ abstract class HudElement(
     scale = defaultScale
   }
 
+  /** Resets all settings to their default values. */
+  fun resetSettings() {
+    for (setting in getSettings()) {
+      @Suppress("UNCHECKED_CAST")
+      val typedSetting = setting as Setting<Any?>
+      typedSetting.value = typedSetting.defaultValue
+    }
+  }
+
   fun containsPoint(px: Float, py: Float, screenWidth: Float, screenHeight: Float): Boolean {
     val (sx, sy) = getScreenPosition(screenWidth, screenHeight)
     return px >= sx && px <= sx + getScaledWidth() &&

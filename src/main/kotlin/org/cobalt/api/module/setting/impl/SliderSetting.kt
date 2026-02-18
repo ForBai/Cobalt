@@ -18,6 +18,8 @@ class SliderSetting(
   val max: Double,
 ) : Setting<Double>(name, description, defaultValue) {
 
+  override val defaultValue: Double = defaultValue
+
   override fun read(element: JsonElement) {
     this.value = element.asDouble.coerceIn(min, max)
   }

@@ -29,6 +29,9 @@ abstract class Setting<T>(
   open var value: T,
 ) : ReadWriteProperty<SettingsContainer, T>, PropertyDelegateProvider<SettingsContainer, ReadWriteProperty<SettingsContainer, T>> {
 
+  open val defaultValue: T
+    get() = value
+
   override operator fun provideDelegate(thisRef: SettingsContainer, property: KProperty<*>): ReadWriteProperty<SettingsContainer, T> {
     thisRef.addSetting(this)
     return this

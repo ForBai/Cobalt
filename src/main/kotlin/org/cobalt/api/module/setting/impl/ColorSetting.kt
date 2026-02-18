@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.cobalt.api.module.setting.Setting
+import org.cobalt.api.ui.theme.ThemeManager
 import java.awt.Color
 
 /** ARGB color picker setting. Value is an ARGB integer (e.g. `0xFFFF0000.toInt()` for red). */
@@ -12,6 +13,8 @@ class ColorSetting(
   description: String,
   defaultValue: Int,
 ) : Setting<Int>(name, description, defaultValue) {
+
+  override val defaultValue: Int = defaultValue
 
   /** Current color mode (static, rainbow, theme, etc.). */
   var mode: ColorMode = ColorMode.Static(defaultValue)
@@ -45,9 +48,11 @@ class ColorSetting(
       }
 
       is ColorMode.SyncedRainbow -> {
-        // Global synced rainbow: use RainbowPhaseProvider for shared phase
-        val hue = RainbowPhaseProvider.getHue(m.speed)
-        val rgb = Color.HSBtoRGB(hue, m.saturation, m.brightness)
+        val theme = ThemeManager.currentTheme
+        val hue = ThemeManager.getRainbowHue()
+        val sat = theme.rainbowSaturation
+        val bri = theme.rainbowBrightness
+        val rgb = Color.HSBtoRGB(hue, sat, bri)
         val alpha = (m.opacity * 255).toInt().coerceIn(0, 255)
         (alpha shl 24) or (rgb and 0x00FFFFFF)
       }

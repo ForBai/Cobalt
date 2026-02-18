@@ -151,10 +151,10 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
     // Custom Tab
     val isCustom = setting.mode !is ColorMode.ThemeColor && setting.mode !is ColorMode.TweakedTheme
     val customColor = if (isCustom) ThemeManager.currentTheme.accent else ThemeManager.currentTheme.controlBg
-    
+
     NVGRenderer.rect(bx, by, tabWidth, tabHeight, customColor, 5F)
     NVGRenderer.hollowRect(bx, by, tabWidth, tabHeight, 1F, ThemeManager.currentTheme.controlBorder, 5F)
-    
+
     val customText = "Custom"
     val customTextWidth = NVGRenderer.textWidth(customText, 13F)
     val customTextColor = if (isCustom) ThemeManager.currentTheme.white else ThemeManager.currentTheme.text
@@ -183,7 +183,7 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
     if (isCustom) {
       val isRainbow = setting.mode is ColorMode.Rainbow || setting.mode is ColorMode.SyncedRainbow
       drawCheckbox(bx, by, checkboxSize, isRainbow, "Rainbow")
-      
+
       val syncX = bx + 100F
       val isSynced = setting.mode is ColorMode.SyncedRainbow
       drawCheckbox(syncX, by, checkboxSize, isSynced, "Sync")
@@ -238,7 +238,7 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
        val x2 = bx + (sliderWidth / 36f) * (i + 1)
        val color1 = Color.HSBtoRGB(i / 36f, 1f, 1f)
        val color2 = Color.HSBtoRGB((i + 1) / 36f, 1f, 1f)
-       NVGRenderer.gradientRect(x1, hueY, x2 - x1, 6F, color1, color2, Gradient.LeftToRight, 3F)
+       NVGRenderer.gradientRect(x1, hueY, x2 - x1, 6F, color1, color2, Gradient.LeftToRight,0f)
      }
 
      NVGRenderer.hollowRect(bx, hueY, sliderWidth, 6F, 1F, ThemeManager.currentTheme.controlBorder, 3F)
@@ -246,18 +246,9 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
 
      val opacityY = hueY + 20F
 
-     NVGRenderer.rect(bx, opacityY, sliderWidth, 6F, ThemeManager.currentTheme.white, 3F)
-     for (i in 0..31) {
-       if (i % 2 == 0) {
-         NVGRenderer.rect(bx + i * 10F, opacityY, 10F, 3F, ThemeManager.currentTheme.textSecondary, 0F)
-         NVGRenderer.rect(bx + i * 10F, opacityY + 3F, 10F, 3F, ThemeManager.currentTheme.white, 0F)
-       } else {
-         NVGRenderer.rect(bx + i * 10F, opacityY, 10F, 3F, ThemeManager.currentTheme.white, 0F)
-         NVGRenderer.rect(bx + i * 10F, opacityY + 3F, 10F, 3F, ThemeManager.currentTheme.textSecondary, 0F)
-       }
-     }
+      NVGRenderer.rect(bx, opacityY, sliderWidth, 6F, ThemeManager.currentTheme.white, 3F)
 
-     val currentColor = Color.HSBtoRGB(staticHue, staticSaturation, staticBrightness)
+      val currentColor = Color.HSBtoRGB(staticHue, staticSaturation, staticBrightness)
      val opaqueColor = Color(currentColor or (255 shl 24), true).rgb
      val transparentColor = Color(currentColor and 0x00FFFFFF, true).rgb
 
@@ -321,20 +312,20 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
 
     values.forEachIndexed { index, value ->
       val sliderY = by + index * 50F
-      
+
       NVGRenderer.text(labels[index], bx, sliderY + 2F, 13F, ThemeManager.currentTheme.text)
-      
+
       val valueText = String.format("%.2f", value)
       val valueWidth = NVGRenderer.textWidth(valueText, 12F)
       NVGRenderer.text(valueText, bx + sliderWidth - valueWidth, sliderY + 2F, 12F, ThemeManager.currentTheme.textSecondary)
-      
+
       val trackY = sliderY + 24F
       val normalizedValue = when (index) {
         0 -> (value / 2f).coerceIn(0f, 1f)
         else -> value
       }
       val thumbX = bx + normalizedValue * sliderWidth
-      
+
       NVGRenderer.rect(bx, trackY, sliderWidth, 6F, ThemeManager.currentTheme.sliderTrack, 3F)
       NVGRenderer.rect(bx, trackY, thumbX - bx, 6F, ThemeManager.currentTheme.sliderFill, 3F)
       NVGRenderer.circle(thumbX, trackY + 3F, 8F, ThemeManager.currentTheme.sliderThumb)
@@ -457,7 +448,7 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
 
       val trackY = sliderY + 24F
       val sliderWidth = 300F
-      
+
       val thumbX = if (index == 0) {
         bx + (normalizedValue + 1f) / 2f * sliderWidth
       } else {
@@ -873,7 +864,7 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
 
   private fun updateRainbowSlider(index: Int, bx: Float, sliderWidth: Float) {
     val normalized = ((mouseX.toFloat() - bx) / sliderWidth).coerceIn(0f, 1f)
-    
+
     val mode = setting.mode
     val newMode = when (mode) {
       is ColorMode.Rainbow -> when (index) {
@@ -898,9 +889,9 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
 
   private fun updateTweakedSlider(index: Int, bx: Float, sliderWidth: Float) {
     val normalized = ((mouseX.toFloat() - bx) / sliderWidth).coerceIn(0f, 1f)
-    
+
     val mode = setting.mode as? ColorMode.TweakedTheme ?: return
-    
+
     val newMode = when (index) {
       0 -> mode.copy(hueOffset = (normalized - 0.5f) * 360f) // -180 to 180
       1 -> mode.copy(saturationMultiplier = normalized * 2f) // 0 to 2
