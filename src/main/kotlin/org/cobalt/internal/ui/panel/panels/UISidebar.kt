@@ -55,7 +55,7 @@ internal class UISidebar : UIPanel(
       .render()
 
     hudButton
-      .setSelected(if (isHoveringOver(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F, hudButton.width, hudButton.height)) true else false)
+      .setSelected(isHoveringOver(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F, hudButton.width, hudButton.height))
       .updateBounds(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F)
       .render()
 

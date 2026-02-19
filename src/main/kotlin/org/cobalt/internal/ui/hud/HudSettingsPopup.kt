@@ -253,61 +253,88 @@ internal class HudSettingsPopup {
     if (!visible) return false
     val target = module ?: return false
 
-    if (button == 0) {
-      val closeX = panelX + panelWidth - padding - 26f
-      val closeY = panelY + 12f
-      if (mouseX >= closeX && mouseX <= closeX + 26f && mouseY >= closeY && mouseY <= closeY + 26f) {
-        hide()
-        return true
-      }
+    if (button == 0 && handleCloseButtonClick(mouseX, mouseY)) {
+      return true
     }
 
     if (button != 0) return containsPoint(mouseX, mouseY)
 
-    val controlsY = panelY + headerHeight + 10f
-    val buttonHeight = 30f
-
-     val toggleText = if (target.enabled) "Disable" else "Enable"
-     val toggleWidth = NVGRenderer.textWidth(toggleText, 13f) + 30f
-     val toggleX = panelX + padding
-
-     if (mouseX >= toggleX && mouseX <= toggleX + toggleWidth &&
-       mouseY >= controlsY && mouseY <= controlsY + buttonHeight
-     ) {
-       target.enabled = !target.enabled
-       toggleAnim.start()
-       return true
-     }
-
-     val resetSettingsText = "Reset Settings"
-     val resetSettingsWidth = NVGRenderer.textWidth(resetSettingsText, 13f) + 30f
-     val resetSettingsX = panelX + panelWidth - padding - resetSettingsWidth
-
-     if (mouseX >= resetSettingsX && mouseX <= resetSettingsX + resetSettingsWidth &&
-       mouseY >= controlsY && mouseY <= controlsY + buttonHeight
-     ) {
-       target.resetSettings()
-       buttonAnim.start()
-       return true
-     }
-
-     val resetText = "Reset Position"
-     val resetWidth = NVGRenderer.textWidth(resetText, 13f) + 30f
-     val resetX = resetSettingsX - resetWidth - 10f
-
-     if (mouseX >= resetX && mouseX <= resetX + resetWidth &&
-       mouseY >= controlsY && mouseY <= controlsY + buttonHeight
-     ) {
-       target.resetPosition()
-       buttonAnim.start()
-       return true
-     }
+    if (handleControlButtonClicks(mouseX, mouseY, target)) return true
 
     for (component in settingComponents) {
       if (component.mouseClicked(button)) return true
     }
 
     return containsPoint(mouseX, mouseY)
+  }
+
+  private fun handleCloseButtonClick(mouseX: Float, mouseY: Float): Boolean {
+    val closeX = panelX + panelWidth - padding - 26f
+    val closeY = panelY + 12f
+    if (mouseX >= closeX && mouseX <= closeX + 26f && mouseY >= closeY && mouseY <= closeY + 26f) {
+      hide()
+      return true
+    }
+    return false
+  }
+
+  private fun handleControlButtonClicks(mouseX: Float, mouseY: Float, target: HudElement): Boolean {
+    val controlsY = panelY + headerHeight + 10f
+    val buttonHeight = 30f
+
+    if (handleToggleButtonClick(mouseX, mouseY, controlsY, buttonHeight, target)) return true
+    if (handleResetSettingsClick(mouseX, mouseY, controlsY, buttonHeight, target)) return true
+    if (handleResetPositionClick(mouseX, mouseY, controlsY, buttonHeight, target)) return true
+
+    return false
+  }
+
+  private fun handleToggleButtonClick(mouseX: Float, mouseY: Float, controlsY: Float, buttonHeight: Float, target: HudElement): Boolean {
+    val toggleText = if (target.enabled) "Disable" else "Enable"
+    val toggleWidth = NVGRenderer.textWidth(toggleText, 13f) + 30f
+    val toggleX = panelX + padding
+
+    if (mouseX >= toggleX && mouseX <= toggleX + toggleWidth &&
+      mouseY >= controlsY && mouseY <= controlsY + buttonHeight
+    ) {
+      target.enabled = !target.enabled
+      toggleAnim.start()
+      return true
+    }
+    return false
+  }
+
+  private fun handleResetSettingsClick(mouseX: Float, mouseY: Float, controlsY: Float, buttonHeight: Float, target: HudElement): Boolean {
+    val resetSettingsText = "Reset Settings"
+    val resetSettingsWidth = NVGRenderer.textWidth(resetSettingsText, 13f) + 30f
+    val resetSettingsX = panelX + panelWidth - padding - resetSettingsWidth
+
+    if (mouseX >= resetSettingsX && mouseX <= resetSettingsX + resetSettingsWidth &&
+      mouseY >= controlsY && mouseY <= controlsY + buttonHeight
+    ) {
+      target.resetSettings()
+      buttonAnim.start()
+      return true
+    }
+    return false
+  }
+
+  private fun handleResetPositionClick(mouseX: Float, mouseY: Float, controlsY: Float, buttonHeight: Float, target: HudElement): Boolean {
+    val resetSettingsText = "Reset Settings"
+    val resetSettingsWidth = NVGRenderer.textWidth(resetSettingsText, 13f) + 30f
+    val resetSettingsX = panelX + panelWidth - padding - resetSettingsWidth
+    val resetText = "Reset Position"
+    val resetWidth = NVGRenderer.textWidth(resetText, 13f) + 30f
+    val resetX = resetSettingsX - resetWidth - 10f
+
+    if (mouseX >= resetX && mouseX <= resetX + resetWidth &&
+      mouseY >= controlsY && mouseY <= controlsY + buttonHeight
+    ) {
+      target.resetPosition()
+      buttonAnim.start()
+      return true
+    }
+    return false
   }
 
   fun mouseReleased(button: Int): Boolean {

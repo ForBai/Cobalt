@@ -126,52 +126,68 @@ internal class UIHudEditor : UIScreen() {
     val my = mouseY.toFloat()
     val button = click.button()
 
-    if (settingsPopup.visible) {
-      if (settingsPopup.mouseClicked(mx, my, button)) return true
-      if (!settingsPopup.containsPoint(mx, my)) settingsPopup.hide()
-    }
+    if (handleSettingsPopupClick(mx, my, button)) return true
 
-    if (button == 1) {
-      val target = findElementUnderCursor(mx, my, screenWidth, screenHeight)
-      if (target != null) {
-        selectedElement = target
-        settingsPopup.show(target, screenWidth, screenHeight)
-        return true
-      }
-    }
+    if (button == 1 && handleRightClick(mx, my, screenWidth, screenHeight)) return true
 
-    if (button == 0) {
-      if (selectedElement != null) {
-        val element = selectedElement!!
-        val (sx, sy) = element.getScreenPosition(screenWidth, screenHeight)
-        val w = element.getScaledWidth()
-        val h = element.getScaledHeight()
-        val handleX = sx + w - RESIZE_HANDLE_SIZE
-        val handleY = sy + h - RESIZE_HANDLE_SIZE
-        
-        if (mx >= handleX && mx <= handleX + RESIZE_HANDLE_SIZE &&
-            my >= handleY && my <= handleY + RESIZE_HANDLE_SIZE) {
-          resizing = true
-          initialMouseX = mx
-          initialMouseY = my
-          initialWidth = w
-          return true
-        }
-      }
-      
-      val target = findElementUnderCursor(mx, my, screenWidth, screenHeight)
-      selectedElement = target
-      if (target != null) {
-        val (sx, sy) = target.getScreenPosition(screenWidth, screenHeight)
-        dragOffsetX = mx - sx
-        dragOffsetY = my - sy
-        dragging = true
-        settingsPopup.hide()
-        return true
-      }
-    }
+    if (button == 0 && handleLeftClick(mx, my, screenWidth, screenHeight)) return true
 
     return super.mouseClicked(click, doubled)
+  }
+
+  private fun handleSettingsPopupClick(mx: Float, my: Float, button: Int): Boolean {
+    if (!settingsPopup.visible) return false
+    if (settingsPopup.mouseClicked(mx, my, button)) return true
+    if (!settingsPopup.containsPoint(mx, my)) settingsPopup.hide()
+    return false
+  }
+
+  private fun handleRightClick(mx: Float, my: Float, screenWidth: Float, screenHeight: Float): Boolean {
+    val target = findElementUnderCursor(mx, my, screenWidth, screenHeight)
+    if (target != null) {
+      selectedElement = target
+      settingsPopup.show(target, screenWidth, screenHeight)
+      return true
+    }
+    return false
+  }
+
+  private fun handleLeftClick(mx: Float, my: Float, screenWidth: Float, screenHeight: Float): Boolean {
+    if (tryStartResizing(mx, my, screenWidth, screenHeight)) return true
+    return tryStartDragging(mx, my, screenWidth, screenHeight)
+  }
+
+  private fun tryStartResizing(mx: Float, my: Float, screenWidth: Float, screenHeight: Float): Boolean {
+    val element = selectedElement ?: return false
+    val (sx, sy) = element.getScreenPosition(screenWidth, screenHeight)
+    val w = element.getScaledWidth()
+    val h = element.getScaledHeight()
+    val handleX = sx + w - RESIZE_HANDLE_SIZE
+    val handleY = sy + h - RESIZE_HANDLE_SIZE
+
+    if (mx >= handleX && mx <= handleX + RESIZE_HANDLE_SIZE &&
+        my >= handleY && my <= handleY + RESIZE_HANDLE_SIZE) {
+      resizing = true
+      initialMouseX = mx
+      initialMouseY = my
+      initialWidth = w
+      return true
+    }
+    return false
+  }
+
+  private fun tryStartDragging(mx: Float, my: Float, screenWidth: Float, screenHeight: Float): Boolean {
+    val target = findElementUnderCursor(mx, my, screenWidth, screenHeight)
+    selectedElement = target
+    if (target != null) {
+      val (sx, sy) = target.getScreenPosition(screenWidth, screenHeight)
+      dragOffsetX = mx - sx
+      dragOffsetY = my - sy
+      dragging = true
+      settingsPopup.hide()
+      return true
+    }
+    return false
   }
 
   override fun mouseReleased(click: MouseButtonEvent): Boolean {

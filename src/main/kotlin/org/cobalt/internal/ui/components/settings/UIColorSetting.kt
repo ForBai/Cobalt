@@ -557,10 +557,23 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
 
     val px = x + width - 360F
     val py = y + height - 10F
-
-    // Tab Clicks
     val bx = px + 10F
     val by = py + 10F
+
+    if (handleTabClicks(bx, by)) return true
+    if (handleCheckboxClicks(bx, py)) return true
+
+    val controlsY = py + 75F
+    return when (setting.mode) {
+      is ColorMode.Static -> handleStaticPanelClick(px, controlsY)
+      is ColorMode.Rainbow -> handleRainbowPanelClick(px, controlsY)
+      is ColorMode.SyncedRainbow -> handleSyncedRainbowPanelClick(px, controlsY)
+      is ColorMode.ThemeColor -> handleThemePanelClick(px, controlsY)
+      is ColorMode.TweakedTheme -> handleTweakedPanelClick(px, controlsY)
+    }
+  }
+
+  private fun handleTabClicks(bx: Float, by: Float): Boolean {
     val totalWidth = 320F
     val tabWidth = (totalWidth - 10F) / 2F
     val tabHeight = 28F
@@ -581,60 +594,72 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
       return true
     }
 
-    // Checkbox Clicks
+    return false
+  }
+
+  private fun handleCheckboxClicks(bx: Float, py: Float): Boolean {
     val checkboxY = py + 48F
     val checkboxSize = 20F
     val isCustom = setting.mode !is ColorMode.ThemeColor && setting.mode !is ColorMode.TweakedTheme
 
-    if (isCustom) {
-      if (isHoveringOver(bx, checkboxY, checkboxSize + 60F, checkboxSize)) {
-         val isRainbow = setting.mode is ColorMode.Rainbow || setting.mode is ColorMode.SyncedRainbow
-         if (isRainbow) {
-           val rgb = Color.HSBtoRGB(staticHue, staticSaturation, staticBrightness)
-           val alpha = (staticOpacity * 255).toInt()
-           setting.mode = ColorMode.Static((alpha shl 24) or (rgb and 0x00FFFFFF))
-         } else {
-           setting.mode = ColorMode.Rainbow()
-         }
-         return true
-      }
-
-      val syncX = bx + 100F
-      if (isHoveringOver(syncX, checkboxY, checkboxSize + 40F, checkboxSize)) {
-        val isSynced = setting.mode is ColorMode.SyncedRainbow
-        if (isSynced) {
-           val old = setting.mode as ColorMode.SyncedRainbow
-           setting.mode = ColorMode.Rainbow(old.speed, old.saturation, old.brightness, old.opacity)
-        } else {
-           val old = setting.mode as? ColorMode.Rainbow
-           if (old != null) {
-             setting.mode = ColorMode.SyncedRainbow(old.speed, old.saturation, old.brightness, old.opacity)
-           } else {
-             setting.mode = ColorMode.SyncedRainbow()
-           }
-        }
-        return true
-      }
+    return if (isCustom) {
+      handleCustomCheckboxClicks(bx, checkboxY, checkboxSize)
     } else {
-      if (isHoveringOver(bx, checkboxY, checkboxSize + 60F, checkboxSize)) {
-        val isAdjusted = setting.mode is ColorMode.TweakedTheme
-        if (isAdjusted) {
-          setting.mode = ColorMode.ThemeColor(selectedThemeProperty)
-        } else {
-          setting.mode = ColorMode.TweakedTheme(selectedThemeProperty)
-        }
-        return true
-      }
+      handleThemeCheckboxClicks(bx, checkboxY, checkboxSize)
+    }
+  }
+
+  private fun handleCustomCheckboxClicks(bx: Float, checkboxY: Float, checkboxSize: Float): Boolean {
+    if (isHoveringOver(bx, checkboxY, checkboxSize + 60F, checkboxSize)) {
+      toggleRainbowMode()
+      return true
     }
 
-    val controlsY = py + 75F
-    return when (setting.mode) {
-      is ColorMode.Static -> handleStaticPanelClick(px, controlsY)
-      is ColorMode.Rainbow -> handleRainbowPanelClick(px, controlsY)
-      is ColorMode.SyncedRainbow -> handleSyncedRainbowPanelClick(px, controlsY)
-      is ColorMode.ThemeColor -> handleThemePanelClick(px, controlsY)
-      is ColorMode.TweakedTheme -> handleTweakedPanelClick(px, controlsY)
+    val syncX = bx + 100F
+    if (isHoveringOver(syncX, checkboxY, checkboxSize + 40F, checkboxSize)) {
+      toggleSyncedMode()
+      return true
     }
+
+    return false
+  }
+
+  private fun toggleRainbowMode() {
+    val isRainbow = setting.mode is ColorMode.Rainbow || setting.mode is ColorMode.SyncedRainbow
+    if (isRainbow) {
+      val rgb = Color.HSBtoRGB(staticHue, staticSaturation, staticBrightness)
+      val alpha = (staticOpacity * 255).toInt()
+      setting.mode = ColorMode.Static((alpha shl 24) or (rgb and 0x00FFFFFF))
+    } else {
+      setting.mode = ColorMode.Rainbow()
+    }
+  }
+
+  private fun toggleSyncedMode() {
+    when (val current = setting.mode) {
+      is ColorMode.SyncedRainbow -> {
+        setting.mode = ColorMode.Rainbow(current.speed, current.saturation, current.brightness, current.opacity)
+      }
+      is ColorMode.Rainbow -> {
+        setting.mode = ColorMode.SyncedRainbow(current.speed, current.saturation, current.brightness, current.opacity)
+      }
+      else -> {
+        setting.mode = ColorMode.SyncedRainbow()
+      }
+    }
+  }
+
+  private fun handleThemeCheckboxClicks(bx: Float, checkboxY: Float, checkboxSize: Float): Boolean {
+    if (isHoveringOver(bx, checkboxY, checkboxSize + 60F, checkboxSize)) {
+      val isAdjusted = setting.mode is ColorMode.TweakedTheme
+      setting.mode = if (isAdjusted) {
+        ColorMode.ThemeColor(selectedThemeProperty)
+      } else {
+        ColorMode.TweakedTheme(selectedThemeProperty)
+      }
+      return true
+    }
+    return false
   }
 
    private fun handleStaticPanelClick(px: Float, py: Float): Boolean {
@@ -865,26 +890,11 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
   private fun updateRainbowSlider(index: Int, bx: Float, sliderWidth: Float) {
     val normalized = ((mouseX.toFloat() - bx) / sliderWidth).coerceIn(0f, 1f)
 
-    val mode = setting.mode
-    val newMode = when (mode) {
-      is ColorMode.Rainbow -> when (index) {
-        0 -> mode.copy(speed = normalized * 2f)
-        1 -> mode.copy(saturation = normalized)
-        2 -> mode.copy(brightness = normalized)
-        3 -> mode.copy(opacity = normalized)
-        else -> mode
-      }
-      is ColorMode.SyncedRainbow -> when (index) {
-        0 -> mode.copy(speed = normalized * 2f)
-        1 -> mode.copy(saturation = normalized)
-        2 -> mode.copy(brightness = normalized)
-        3 -> mode.copy(opacity = normalized)
-        else -> mode
-      }
+    setting.mode = when (val mode = setting.mode) {
+      is ColorMode.Rainbow -> updateRainbowModeValues(mode, index, normalized)
+      is ColorMode.SyncedRainbow -> updateSyncedRainbowModeValues(mode, index, normalized)
       else -> mode
     }
-
-    setting.mode = newMode
   }
 
   private fun updateTweakedSlider(index: Int, bx: Float, sliderWidth: Float) {
@@ -903,16 +913,37 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
     setting.mode = newMode
   }
 
+  private fun updateRainbowModeValues(mode: ColorMode.Rainbow, index: Int, normalized: Float): ColorMode.Rainbow {
+    return when (index) {
+      0 -> mode.copy(speed = normalized * 2f)
+      1 -> mode.copy(saturation = normalized)
+      2 -> mode.copy(brightness = normalized)
+      3 -> mode.copy(opacity = normalized)
+      else -> mode
+    }
+  }
+
+  private fun updateSyncedRainbowModeValues(mode: ColorMode.SyncedRainbow, index: Int, normalized: Float): ColorMode.SyncedRainbow {
+    return when (index) {
+      0 -> mode.copy(speed = normalized * 2f)
+      1 -> mode.copy(saturation = normalized)
+      2 -> mode.copy(brightness = normalized)
+      3 -> mode.copy(opacity = normalized)
+      else -> mode
+    }
+  }
+
   override fun charTyped(input: CharacterEvent): Boolean {
     if (!hexFocused || !pickerOpen || setting.mode !is ColorMode.Static) return false
 
     val char = input.codepoint.toChar()
-    if (char in '0'..'9' || char in 'a'..'f' || char in 'A'..'F' || char == '#') {
-      if (char.code >= 32 && char != '\u007f') {
-        hexInputHandler.insertText(char.toString())
-        hexValid = validateHexInput(hexInputHandler.getText())
-        return true
-      }
+    val isHexChar = char in '0'..'9' || char in 'a'..'f' || char in 'A'..'F' || char == '#'
+    val isPrintable = char.code >= 32 && char != '\u007f'
+    
+    if (isHexChar && isPrintable) {
+      hexInputHandler.insertText(char.toString())
+      hexValid = validateHexInput(hexInputHandler.getText())
+      return true
     }
 
     return false
@@ -924,67 +955,76 @@ internal class UIColorSetting(private val setting: ColorSetting) : UIComponent(
     val ctrl = input.modifiers and GLFW.GLFW_MOD_CONTROL != 0
     val shift = input.modifiers and GLFW.GLFW_MOD_SHIFT != 0
 
-    when (input.key) {
-      GLFW.GLFW_KEY_ESCAPE, GLFW.GLFW_KEY_ENTER -> {
-        if (hexValid) commitHexInput()
-        hexFocused = false
-        return true
-      }
+    if (ctrl) {
+      val handled = handleCtrlKeyCombo(input.key)
+      if (handled) return true
+    }
 
-      GLFW.GLFW_KEY_BACKSPACE -> {
-        hexInputHandler.backspace()
-        hexValid = validateHexInput(hexInputHandler.getText())
-        return true
-      }
+    return handleHexInputKey(input.key, shift)
+  }
 
-      GLFW.GLFW_KEY_DELETE -> {
-        hexInputHandler.delete()
-        hexValid = validateHexInput(hexInputHandler.getText())
-        return true
+  private fun handleCtrlKeyCombo(key: Int): Boolean {
+    return when (key) {
+      GLFW.GLFW_KEY_A -> {
+        hexInputHandler.selectAll()
+        true
       }
-
-      GLFW.GLFW_KEY_LEFT -> {
-        hexInputHandler.moveCursorLeft(shift); return true
-      }
-
-      GLFW.GLFW_KEY_RIGHT -> {
-        hexInputHandler.moveCursorRight(shift); return true
-      }
-
-      GLFW.GLFW_KEY_HOME -> {
-        hexInputHandler.moveCursorToStart(shift); return true
-      }
-
-      GLFW.GLFW_KEY_END -> {
-        hexInputHandler.moveCursorToEnd(shift); return true
-      }
-
-      GLFW.GLFW_KEY_A -> if (ctrl) {
-        hexInputHandler.selectAll(); return true
-      }
-
-      GLFW.GLFW_KEY_C -> if (ctrl) {
+      GLFW.GLFW_KEY_C -> {
         hexInputHandler.copy()?.let { Minecraft.getInstance().keyboardHandler.clipboard = it }
-        return true
+        true
       }
-
-      GLFW.GLFW_KEY_X -> if (ctrl) {
+      GLFW.GLFW_KEY_X -> {
         hexInputHandler.cut()?.let { Minecraft.getInstance().keyboardHandler.clipboard = it }
         hexValid = validateHexInput(hexInputHandler.getText())
-        return true
+        true
       }
-
-      GLFW.GLFW_KEY_V -> if (ctrl) {
+      GLFW.GLFW_KEY_V -> {
         val clipboard = Minecraft.getInstance().keyboardHandler.clipboard
         if (clipboard.isNotEmpty()) {
           hexInputHandler.insertText(clipboard)
           hexValid = validateHexInput(hexInputHandler.getText())
         }
-        return true
+        true
       }
+      else -> false
     }
+  }
 
-    return false
+  private fun handleHexInputKey(key: Int, shift: Boolean): Boolean {
+    return when (key) {
+      GLFW.GLFW_KEY_ESCAPE, GLFW.GLFW_KEY_ENTER -> {
+        if (hexValid) commitHexInput()
+        hexFocused = false
+        true
+      }
+      GLFW.GLFW_KEY_BACKSPACE -> {
+        hexInputHandler.backspace()
+        hexValid = validateHexInput(hexInputHandler.getText())
+        true
+      }
+      GLFW.GLFW_KEY_DELETE -> {
+        hexInputHandler.delete()
+        hexValid = validateHexInput(hexInputHandler.getText())
+        true
+      }
+      GLFW.GLFW_KEY_LEFT -> {
+        hexInputHandler.moveCursorLeft(shift)
+        true
+      }
+      GLFW.GLFW_KEY_RIGHT -> {
+        hexInputHandler.moveCursorRight(shift)
+        true
+      }
+      GLFW.GLFW_KEY_HOME -> {
+        hexInputHandler.moveCursorToStart(shift)
+        true
+      }
+      GLFW.GLFW_KEY_END -> {
+        hexInputHandler.moveCursorToEnd(shift)
+        true
+      }
+      else -> false
+    }
   }
 
   companion object {
