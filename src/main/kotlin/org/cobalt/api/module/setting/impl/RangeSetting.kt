@@ -7,13 +7,21 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import org.cobalt.api.module.setting.Setting
 
+/**
+ * Dual-handle range slider setting. Value is a `Pair<Double, Double>` (start, end).
+ *
+ * @property min Minimum allowed value for both handles.
+ * @property max Maximum allowed value for both handles.
+ */
 class RangeSetting(
   name: String,
   description: String,
-  private val defaultValue: Pair<Double, Double>,
+  default: Pair<Double, Double>,
   val min: Double,
   val max: Double,
-) : Setting<Pair<Double, Double>>(name, description, defaultValue) {
+) : Setting<Pair<Double, Double>>(name, description, default) {
+
+  override val defaultValue: Pair<Double, Double> = default
 
   override fun read(element: JsonElement) {
     if (element.isJsonObject) {

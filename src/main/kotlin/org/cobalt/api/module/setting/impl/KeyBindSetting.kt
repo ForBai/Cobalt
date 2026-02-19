@@ -6,11 +6,17 @@ import org.cobalt.api.module.setting.Setting
 import org.cobalt.api.util.helper.KeyBind
 import org.lwjgl.glfw.GLFW
 
+/**
+ * Key binding setting. Value is a [KeyBind] — use `value.isPressed()` to check for key presses.
+ * Default to `KeyBind(-1)` for unbound.
+ */
 class KeyBindSetting(
   name: String,
   description: String,
   defaultValue: KeyBind,
 ) : Setting<KeyBind>(name, description, defaultValue) {
+
+  override val defaultValue: KeyBind = defaultValue
 
   val keyName: String
     get() = when (value.keyCode) {

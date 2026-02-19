@@ -27,6 +27,10 @@ internal object ThemeSerializer {
 
   fun toJson(theme: CustomTheme): JsonObject = JsonObject().apply {
     addProperty("name", theme.name)
+    addProperty("rainbowEnabled", theme.rainbowEnabled)
+    addProperty("rainbowSpeed", theme.rainbowSpeed)
+    addProperty("rainbowSaturation", theme.rainbowSaturation)
+    addProperty("rainbowBrightness", theme.rainbowBrightness)
     addProperty("background", theme.background)
     addProperty("panel", theme.panel)
     addProperty("inset", theme.inset)
@@ -86,6 +90,10 @@ internal object ThemeSerializer {
     val defaults = CustomTheme()
     return CustomTheme(
       name = json.get("name")?.asString ?: defaults.name,
+      rainbowEnabled = json.get("rainbowEnabled")?.asBoolean ?: defaults.rainbowEnabled,
+      rainbowSpeed = json.get("rainbowSpeed")?.asFloat ?: defaults.rainbowSpeed,
+      rainbowSaturation = json.get("rainbowSaturation")?.asFloat ?: defaults.rainbowSaturation,
+      rainbowBrightness = json.get("rainbowBrightness")?.asFloat ?: defaults.rainbowBrightness,
       background = json.get("background")?.asInt ?: defaults.background,
       panel = json.get("panel")?.asInt ?: defaults.panel,
       inset = json.get("inset")?.asInt ?: defaults.inset,

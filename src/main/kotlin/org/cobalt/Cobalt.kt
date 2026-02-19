@@ -3,6 +3,8 @@ package org.cobalt
 import net.fabricmc.api.ClientModInitializer
 import org.cobalt.api.command.CommandManager
 import org.cobalt.api.event.EventBus
+import org.cobalt.api.hud.HudModuleManager
+import org.cobalt.api.hud.modules.WatermarkModule
 import org.cobalt.api.module.ModuleManager
 import org.cobalt.api.notification.NotificationManager
 import org.cobalt.api.rotation.RotationExecutor
@@ -16,6 +18,8 @@ object Cobalt : ClientModInitializer {
 
 
   override fun onInitializeClient() {
+    ModuleManager.addModules(listOf(WatermarkModule(), WatermarkModule()))
+
     AddonLoader.getAddons().map { it.second }.forEach {
       it.onLoad()
       ModuleManager.addModules(it.getModules())
@@ -26,7 +30,7 @@ object Cobalt : ClientModInitializer {
 
     listOf(
       TickScheduler, MainCommand, NotificationManager,
-      RotationExecutor,
+      RotationExecutor, HudModuleManager,
     ).forEach { EventBus.register(it) }
     Config.loadModulesConfig()
     EventBus.register(this)

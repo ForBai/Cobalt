@@ -6,6 +6,9 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.File
 import net.minecraft.client.Minecraft
+import org.cobalt.api.hud.HudAnchor
+import org.cobalt.api.module.Module
+import org.cobalt.api.module.ModuleManager
 import org.cobalt.api.ui.theme.ThemeManager
 import org.cobalt.api.ui.theme.impl.CustomTheme
 import org.cobalt.internal.loader.AddonLoader
@@ -13,10 +16,32 @@ import org.cobalt.internal.ui.theme.ThemeSerializer
 
 internal object Config {
 
+  private const val BUILTIN_ADDON_ID = "cobalt"
+
   private val mc: Minecraft = Minecraft.getInstance()
   private val gson = GsonBuilder().setPrettyPrinting().create()
   private val modulesFile = File(mc.gameDirectory, "config/cobalt/addons.json")
   private val themesFile = File(mc.gameDirectory, "config/cobalt/themes.json")
+
+  private fun buildGroupedModules(): Map<String, List<Module>> {
+    val addonModules = mutableSetOf<Module>()
+    val grouped = mutableMapOf<String, MutableList<Module>>()
+
+    AddonLoader.getAddons().forEach { (metadata, addon) ->
+      val modules = addon.getModules()
+      addonModules.addAll(modules)
+      if (modules.isNotEmpty()) {
+        grouped[metadata.id] = modules.toMutableList()
+      }
+    }
+
+    val builtinModules = ModuleManager.getModules().filter { it !in addonModules }
+    if (builtinModules.isNotEmpty()) {
+      grouped[BUILTIN_ADDON_ID] = builtinModules.toMutableList()
+    }
+
+    return grouped
+  }
 
   fun loadModulesConfig() {
     loadThemesConfig()
@@ -29,25 +54,49 @@ internal object Config {
     val text = modulesFile.bufferedReader().use { it.readText() }
     if (text.isEmpty()) return
 
-    val addonsMap = AddonLoader.getAddons().associate { it.first.id to it.second }
+    val grouped = buildGroupedModules()
 
     runCatching {
       JsonParser.parseString(text).asJsonArray
     }.getOrNull()?.forEach { element ->
       val addonObj = element.asJsonObject
       val addonId = addonObj.get("addon").asString
-      val addon = addonsMap[addonId] ?: return@forEach
+      val modules = grouped[addonId] ?: return@forEach
 
-      val modulesMap = addon.getModules().associateBy { it.name }
-      val settingsMap = modulesMap.values.flatMap { it.getSettings() }.associateBy { it.name }
+      val modulesMap = modules.associateBy { it.name }
 
       addonObj.getAsJsonArray("modules")?.forEach { moduleElement ->
         val moduleObj = moduleElement.asJsonObject
         val moduleName = moduleObj.get("name").asString
-        modulesMap[moduleName] ?: return@forEach
+        val module = modulesMap[moduleName] ?: return@forEach
 
+        val settingsMap = module.getSettings().associateBy { it.name }
         moduleObj.getAsJsonObject("settings")?.entrySet()?.forEach { (key, value) ->
           settingsMap[key]?.read(value)
+        }
+
+        val hudElementsMap = module.getHudElements().associateBy { it.id }
+        moduleObj.getAsJsonArray("hudElements")?.forEach { hudEl ->
+          val hudObj = hudEl.asJsonObject
+          val hudId = hudObj.get("id")?.asString ?: return@forEach
+          val hudElement = hudElementsMap[hudId] ?: return@forEach
+
+          hudElement.enabled = hudObj.get("enabled")?.asBoolean ?: true
+          hudElement.anchor = hudObj.get("anchor")?.asString?.let {
+            runCatching { HudAnchor.valueOf(it) }.getOrNull()
+          } ?: HudAnchor.TOP_LEFT
+          hudElement.offsetX = hudObj.get("offsetX")?.asFloat ?: 10f
+          hudElement.offsetY = hudObj.get("offsetY")?.asFloat ?: 10f
+          hudElement.scale = hudObj.get("scale")?.asFloat?.coerceIn(0.5f, 3.0f) ?: 1.0f
+
+          val hudSettingsObj = hudObj.getAsJsonObject("settings")
+          if (hudSettingsObj != null) {
+            hudElement.getSettings().forEach { setting ->
+              hudSettingsObj.get(setting.name)?.let { jsonEl ->
+                runCatching { setting.read(jsonEl) }
+              }
+            }
+          }
         }
       }
     }
@@ -56,12 +105,12 @@ internal object Config {
   fun saveModulesConfig() {
     val jsonArray = JsonArray()
 
-    AddonLoader.getAddons().forEach { (metadata, addon) ->
+    buildGroupedModules().forEach { (addonId, modules) ->
       val addonObject = JsonObject()
-      addonObject.addProperty("addon", metadata.id)
+      addonObject.addProperty("addon", addonId)
 
       val modulesArray = JsonArray()
-      addon.getModules().forEach { module ->
+      modules.forEach { module ->
         val moduleObject = JsonObject()
         moduleObject.addProperty("name", module.name)
 
@@ -70,6 +119,26 @@ internal object Config {
           settingsObject.add(setting.name, setting.write())
         }
         moduleObject.add("settings", settingsObject)
+
+        val hudElementsArray = JsonArray()
+        module.getHudElements().forEach { hudElement ->
+          val hudObj = JsonObject()
+          hudObj.addProperty("id", hudElement.id)
+          hudObj.addProperty("enabled", hudElement.enabled)
+          hudObj.addProperty("anchor", hudElement.anchor.name)
+          hudObj.addProperty("offsetX", hudElement.offsetX)
+          hudObj.addProperty("offsetY", hudElement.offsetY)
+          hudObj.addProperty("scale", hudElement.scale)
+
+          val hudSettingsObj = JsonObject()
+          hudElement.getSettings().forEach { setting ->
+            hudSettingsObj.add(setting.name, setting.write())
+          }
+          hudObj.add("settings", hudSettingsObj)
+          hudElementsArray.add(hudObj)
+        }
+        moduleObject.add("hudElements", hudElementsArray)
+
         modulesArray.add(moduleObject)
       }
 

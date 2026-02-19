@@ -9,6 +9,7 @@ import org.cobalt.internal.ui.components.tooltips.UITooltip
 import org.cobalt.internal.ui.components.tooltips.impl.UITextTooltip
 import org.cobalt.internal.ui.panel.UIPanel
 import org.cobalt.internal.ui.screen.UIConfig
+import org.cobalt.internal.ui.screen.UIHudEditor
 import org.cobalt.internal.ui.util.isHoveringOver
 
 internal class UISidebar : UIPanel(
@@ -20,6 +21,10 @@ internal class UISidebar : UIPanel(
 
   private val moduleButton = UIButton("/assets/cobalt/textures/ui/box.svg") {
     UIConfig.swapBodyPanel(UIAddonList())
+  }
+
+  private val hudButton = UIButton("/assets/cobalt/textures/ui/palette.svg") {
+    UIHudEditor().openUI()
   }
 
   private val steveIcon = NVGRenderer.createImage("/assets/cobalt/textures/steve.png")
@@ -36,7 +41,7 @@ internal class UISidebar : UIPanel(
 
   init {
     components.addAll(
-      listOf(moduleButton)
+      listOf(moduleButton, hudButton)
     )
   }
 
@@ -47,6 +52,11 @@ internal class UISidebar : UIPanel(
     moduleButton
       .setSelected(true)
       .updateBounds(x + (width / 2F) - (moduleButton.width / 2F), y + 75F)
+      .render()
+
+    hudButton
+      .setSelected(isHoveringOver(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F, hudButton.width, hudButton.height))
+      .updateBounds(x + (width / 2F) - (hudButton.width / 2F), y + 75F + 35F)
       .render()
 
     val userIconX = x + (width / 2F) - 16F

@@ -4,6 +4,12 @@ interface Theme {
 
   val name: String
 
+  // Rainbow settings (globally synced)
+  val rainbowEnabled: Boolean
+  val rainbowSpeed: Float
+  val rainbowSaturation: Float
+  val rainbowBrightness: Float
+
   val background: Int
   val panel: Int
   val inset: Int

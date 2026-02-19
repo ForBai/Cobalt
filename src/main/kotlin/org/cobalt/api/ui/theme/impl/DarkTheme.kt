@@ -7,6 +7,11 @@ class DarkTheme : Theme {
 
   override val name = "Dark"
 
+  override val rainbowEnabled = false
+  override val rainbowSpeed = 1f
+  override val rainbowSaturation = 1f
+  override val rainbowBrightness = 1f
+
   override val background = Color(18, 18, 18).rgb
   override val panel = Color(24, 24, 24).rgb
   override val inset = Color(30, 30, 30).rgb
